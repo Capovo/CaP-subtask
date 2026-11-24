@@ -1,0 +1,297 @@
+CaP-subtask：面向 RoboTwin 2.0 Table 1 的实验方案
+日期：2026-11-24
+状态：方案与协议草案；尚未执行正式训练或评测。
+配套文件：experiments/robotwin_table1/plan.yaml、results_template.csv。
+plan.yaml 是实验规格，不是现有 Hydra/benchmark runner 可以直接执行的配置。
+
+1. 目标与主要结论
+
+验证：在现有 AW-0 的 Code Expert 中加入 τ0 Proposal 的当前子任务，是否改善任务成功率，
+尤其是多阶段任务的阶段选择、重复动作和失败后的恢复。不能预设其必然改善视觉随机化鲁棒性。
+
+推荐先做冻结 τ0 + 低层继续微调 + WAM 动作执行，再用同一训练权重评估 Hybrid 执行。
+保持 RoboTwin 原有三相机、14D 双臂关节状态/绝对关节目标，不做 LIBERO 的 7D/8D 改造。
+不接入 τ0 低层 VLA、世界模型搜索、价值模型或反思模型；它们会扩大实验变量。
+
+必须分别回答两个问题：
+  A. 结果与用户提供的论文 Table 1 相比如何？使用相同 50-task、50-rollout、Clean/Random 口径。
+  B. 提升是否来自 τ0 条件？必须与相同初始化、数据、训练预算和执行模式的无条件对照比较。
+仅比原版 AW-0 的论文数值，不能排除继续训练、训练数据或推理参数变化的影响。
+
+2. 已核实的现状
+
+可直接复用：
+  模型代码：/home/yilianli/project/CaP-subtask
+  原仓库：/home/yilianli/project/agentic-wam
+  初始化：/home/yilianli/project/models/agentic-wam-robotwin-release/hybrid.pt
+  论文 WAM 参考权重：同目录 wam.pt
+  预训练参考权重：/home/yilianli/project/models/agentic-wam-pretrain/agenticwam_pretrain.pt
+  14D 统计：/home/yilianli/project/models/agentic-wam-robotwin-release/dataset_stats.json
+  技能和冻结程序：configs/robotwin/tasks_indep/<task>/
+  模拟器：原仓库 codegen/sim/capsim/third_party/RoboTwin
+  硬件：2 张 RTX PRO 5000 Blackwell，每张约 48GB。
+
+已实现：训练/推理共用子任务 prompt；按原始 episode/frame 对齐的缓存；在线规划器记忆重置；
+WAM/Hybrid 接入；11 项 CPU/HTTP 验证。尚无新训练权重或新模型闭环成功率。
+
+尚需准备：
+  - τ0 Proposal 的独立 Python 3.12/Transformers 5 环境与 9B 权重；当前标准部署位置未找到。
+  - RoboTwin 训练示范、程序切片、任务文本缓存；local.yaml 仍为 /path/to/... 占位路径。
+  - 默认 cap_subtask 数据配置只有 click_alarmclock，须显式扩展并核实全部 50 个任务。
+  - Hybrid：已有部署记录未确认 SAM3 权重/分割服务成功，完整 Hybrid 闭环仍待验证。
+  - 完整大模型的两卡训练显存与实际吞吐尚未验证；小型测试不能代替这一步。
+
+3. 两条实验路线及可比较范围
+
+路线 A：利用已发布 RoboTwin hybrid.pt 继续适配（推荐先实施）。
+  对照组和条件组从同一个 hybrid.pt 开始，使用同一批 clean CaP 对齐示范。
+  优先获取原发布版本的训练示范；若不能获得，用冻结程序另采并逐任务选定 50 条成功示范。
+  新采数据与原 hybrid.pt 已见数据是否重合未知，所以这是已训练策略的继续适配实验。
+  报告新增数据量和初始化历史，不能声称总共只见过 2,500 条下游示范。
+  结果可与 Table 1 作参考比较；τ0 增益主要由本地匹配对照支持。
+
+路线 B：统一下游数据预算的论文可比实验（后续正式研究版本）。
+  从 AW-0 基础预训练权重开始；使用相同 50 tasks × 50 条官方 demo_clean = 2,500 条示范。
+  为这些已有示范补程序、阶段标签和 τ0 条件，不通过另采 CaP 轨迹替换它们。
+  有/无 τ0 的模型使用完全相同的示范和训练预算；正式统计仅使用未参与开发的评测场景。
+  若另做 CaP 采集路线，应作为单独数据设置报告。
+  本地有效 batch 与训练步数仍须披露；不能将当前小批量继续微调称为论文训练预算复现。
+  路线 A 与路线 B 的结果分开标注，不能合并成一个不区分初始化/数据来源的表。
+
+4. 实验矩阵
+
+论文参考行（由用户给图及论文 Table 1）：
+  方法                    Clean    Random   Average
+  pi0.5                    54.9      27.7      41.3
+  DreamZero                33.6      17.6      25.6
+  EgoScale                 26.2       2.9      14.5
+  WLA                      64.8       3.6      34.2
+  AW-0                     80.8      20.6      50.7
+  AW-0 hybrid              63.1      29.2      46.2
+
+本地正式实验：
+  R0  发布 wam.pt：原发布 WAM 配置，复核本机与论文的偏差。
+  R1  发布 hybrid.pt：原发布 Hybrid 配置，复核感知/代码执行管线。
+  C0  hybrid.pt + 匹配继续微调，无 τ0 条件；WAM 执行。
+  C1  hybrid.pt + 相同继续微调，有冻结 τ0 条件；WAM 执行。主要新增方法。
+  C0H 与 C0 完全同一检查点，切换 Hybrid 执行。
+  C1H 与 C1 完全同一检查点，切换 Hybrid 执行。次要新增方法。
+
+只需正式训练 C0/C1 两个低层模型，不为 C0H/C1H 另训权重。
+C0 与 C1 固定相同 helper、数据/批次采样、优化步数、学习率、损失权重、代码预算和推理参数。
+本地 C0/C1/C0H/C1H 统一 40 denoise steps、124 code tokens、replan=24、crop=0.95；
+同一组 code decode 阈值/参数。原 R0/R1 保留发布参数，单独记录差异，不混入因果对照。
+R0 当前发布配置为 20 denoise steps、128 code tokens；R1 为 40、124。
+
+关键比较：
+  C1 - C0：在 WAM 执行下的子任务条件收益。
+  C1H - C0H：在 Hybrid 执行下的子任务条件收益。
+  C0H - C0、C1H - C1：固定权重下的执行模式差异。
+  C1/C1H 与论文行：系统整体的参考比较，额外 9B 规划器及延迟必须披露。
+
+可选消融（先在预注册任务子集做，不替代正式 50-task 主结果）：
+  D0  原 hybrid.pt 仅增加 τ0 prompt、不训练，诊断是否必须学习新条件。
+  D1  将子任务条件替换为总任务/固定通用文本，并按同样预算训练，排除仅增加文本的影响。
+  D2  部署时关闭 τ0 历史记忆，诊断记忆作用；注明这是输入分布变化的部署消融。
+  D3  仅用训练集对 τ0 做 LoRA 后重建缓存、重训低层；单独报告额外监督与训练成本。
+任何 oracle 阶段/GT 对象状态辅助实验只能列为特权诊断，不进入主表。
+
+5. 数据准备与条件构造
+
+主路线只用 demo_clean 示范训练，不混入 demo_randomized 示范；评测保留 Clean/Random 两种。
+每个任务固定选择规则：成功/完整对齐示范中按预先固定的顺序选 50 条，C0/C1 完全一致。
+采集脚本 --episodes 是尝试 seed 数，不保证得到该数量的成功示范；不足 50 时继续采训练 seed。
+训练 seed 与开发、正式评测 seed 不交叉，保存实际 seed 和示范来源，不能只记录 seed_base。
+
+已有采集链（原 agentic-wam/codegen/sim 中）：
+  pipeline/scripts/make_dataset.py --task <task> --task-config demo_clean \
+      --program /home/yilianli/project/CaP-subtask/configs/robotwin/tasks_indep/<task>/frozen_program.py \
+      --start-seed 1001 --episodes <尝试数> --gpus 0 1 --out <数据目录>/<task>
+需先核对 --program 的 stage 标记与 helper 依赖；不能把一次运行完成等同于有效训练数据完成。
+默认 privileged 仅用于离线示范采集，正式评测必须沿用非特权感知实现。
+
+每条示范至少具备：
+  三路 RGB（head/left/right）和一致的图像预处理；
+  14D qpos 状态、14D 绝对关节动作；
+  episode/frame/timestamp、总任务指令；
+  CaP stage 边界、程序片段、preamble/helper library；
+  归一化统计、Cosmos 任务文本嵌入；
+  τ0 子任务条件缓存和数据/程序/模型版本摘要。
+
+轨迹 -> LeRobot v2.x -> 程序切片/文本缓存 -> 当前观测清单 -> τ0 顺序推理 -> 条件缓存。
+优先从 dataset.yaml 生成真实数据配置，不能仅把模板中的 50 个占位路径展开当作数据已准备。
+warm-start 路线先固定发布版 14D stats，检查新数据范围；若决定重算，两组同步更换并记录摘要。
+AW-0 起点的独立路线只用自己的训练数据计算 stats。
+
+τ0 约束：
+  - 输入只包含当前三路 RGB、完整任务和此前模型生成的记忆。
+  - 初版与线上 replan 对齐，stride=24；训练窗口起点落入最近过去一次规划的区间。
+  - 新 episode 清空记忆；不能将 GT 阶段、未来图像、未来动作或成功判定送给规划器。
+  - Code Expert 只接 subtask 文本；think/memory 保留在规划器端。
+  - 审核“对象正确、手臂正确、阶段与示范一致、指令可执行”，format_valid 并不保证语义正确。
+  - 对条件/示范冲突采取预先固定的训练处理规则，并同步处理对照组的数据选择；
+    若冲突普遍，应进入单独的 Proposal 适配实验，不能静默用 GT 替换并仍声称预测条件训练。
+  - 正式评测必须在线对当前策略自己的观测重新规划，不能回放示范上的离线子任务缓存。
+
+准备所有任务配置的现有命令（仅在真实数据准备完后执行）：
+  python scripts/prepare_subtask_data_config.py --tasks all --overwrite
+单任务生成条件缓存的现有命令：
+  python scripts/export_tau0_observations.py --dataset <lerobot目录> --output <观测目录> --stride 24
+  python scripts/predict_tau0_subtasks.py --input <观测目录>/observations.jsonl --output <预测文件>
+  python scripts/build_subtask_cache.py --observations <观测目录>/observations.jsonl \
+      --predictions <预测文件> --output <条件缓存文件>
+
+6. 训练安排（路线 A 的起始建议，不是已验证的最优超参数）
+
+阶段 0：先做 100 个完整 forward/backward/optimizer steps，验证损失、梯度、显存、吞吐和条件对齐。
+阶段 1：8 个预注册任务的小规模试验，C0/C1 各 500-1,000 steps，仅用独立 Clean 开发场景选设置。
+阶段 2：50-task 多任务继续微调，建议从每组 5,000 steps 开始；若开发验证表明未收敛，
+        在正式评测前统一决定延长至 15,000 steps，两组使用相同总预算。
+
+建议起点：BF16、ZeRO-2、gradient checkpointing，2 GPU × batch 1 × accumulation 2 = effective batch 4；
+learning_rate=2e-5、weight_decay=1e-2、cosine、save_every=1000、seed=42。
+学习率低于当前默认 1e-4，目的是减少已有 RoboTwin 能力遗忘；必须通过开发验证决定。
+冻结 τ0、VAE 和原本冻结的视觉塔；训练原低层可训练三专家/merger/状态映射参数。
+如完整两卡训练 OOM，再评估 CPU optimizer offload 或相同范围的低层适配，两组必须一起改变。
+保持 video/action/code 三路损失，默认系数 1/1/0.5；condition 不作为代码标签且不被 mask。
+完整训练时停止 τ0/感知服务，使用离线条件缓存，避免规划器占用训练显存。
+不支持本条件路径的 AGENTICWAM_FAST_JOINT 继续禁用。
+
+C1 训练命令模板（数据/配置完成后）：
+  source scripts/activate_local.sh
+  NPROC=2 ZERO=2 bash scripts/train_cap_subtask.sh learning_rate=2e-5 max_steps=5000 \
+      batch_size=1 gradient_accumulation_steps=2 save_every=1000 seed=42 wandb.enabled=false
+C0 匹配训练配置尚需新增，见第 10 节；不能直接用原 robotwin_hybrid recipe 代替，因其预算不同。
+
+checkpoint 选择只依据预注册的 Clean 开发协议；开发场景与正式场景分离。
+若根据 Random 成功率挑选超参数或检查点，必须披露为利用 Random 开发分布的额外设置。
+第一轮用一个训练 seed；若预算允许，复验 C0/C1 的 seed=43/44，再报告跨训练 seed 的变动。
+
+7. Table 1 正式评测协议
+
+任务：configs/robotwin/benchmark.yaml 中固定的全部 50 项，不筛选容易任务。
+设置：clean -> demo_clean；Random -> demo_randomized。
+每任务、每设置：50 个有效评测场景；每个方法共 50 × 2 × 50 = 5,000 个 rollout。
+6 个本地正式配置合计 30,000 个 rollout；不是 50-task 总共只做 50 次。
+同一个场景的普通策略失败仍算一次；仅环境 expert 在策略运行前的官方有效性检查可筛场景。
+
+现有 standard 默认 100 次、10 shards。Table 1 对照必须显式 --episodes 50 --shards 1。
+固定 shard seed=0；上游从 scene seed 100000 开始逐个检查，最终接受的 seed 可能有空洞。
+必须在策略运行前固定或事后严格核对实际 accepted scene seed、初始状态和指令逐行一致。
+seed_base 一样或 episode 数一样都不足以证明配对；上游当前没有保存完整 accepted-seed 清单。
+原论文的精确 seed 清单未取得；本方案是公开计数协议对齐，不能称逐场景重现原论文。
+Clean/Random 的 scene seed 可相同，但场景配置不同，不能将它们当作相同物理场景。
+
+指令初版采用发布配置的 seen 池，并保存实际指令；论文 Table 1 未明确池类型，需标记这一未决项。
+若确认论文采用其他池，再统一生成所有本地方法的正式清单；seen/unseen 结果不能混合。
+每回合清空 τ0 记忆、代码缓存、action queue 和 Hybrid arbiter 状态。
+保留官方每任务 step limit、动作计数方式、成功判定和图像处理。
+Hybrid 冻结相同程序/helper、感知模型版本和仲裁阈值；不因某个方法单独修改技能或规则。
+记录完整输入模态；若原 Hybrid 感知使用观测 depth/点云，照实列出，不将全系统描述成仅 RGB。
+正式阶段禁止 GT 对象姿态/抓取标注/任务进度 oracle 等特权输入。
+
+异常规则必须在运行前实现并固定：
+  策略自己的空/非法输出、重复无进展、达到动作上限等，作为该场景失败，不能删样本或另抽场景。
+  服务未启动、文件缺失、模拟器/硬件故障等基础设施错误，标为 error；同一场景恢复执行，
+  未解决时不发布完整主表。不能静默切回无 τ0 策略。
+  现有 benchmark 的任务级自动重跑设置为 --retries 0，避免误将整组重复结果覆盖原记录；
+  后续按 episode/scene 恢复，不让重跑改变抽样或选择性保留成功。
+
+论文参考模型 WAM 的实际 dry-run/正式模板：
+  python scripts/eval_robotwin_release.py wam --episodes 50 --shards 1 --gpus 0 \
+      --retries 0 --name table1_r0_release_wam --dry-run --launch-args --extra paths=local
+  正式执行时只删除 --dry-run。
+论文参考 Hybrid 模板（需感知服务）：
+  python scripts/eval_robotwin_release.py hybrid --episodes 50 --shards 1 --gpus 0 \
+      --vis-gpu 1 --retries 0 --name table1_r1_release_hybrid --dry-run --launch-args --extra paths=local
+
+C1 WAM 模板（检查点必须是真正完成微调的 C1 权重）：
+  CAP_SUBTASK_CKPT=/absolute/path/to/trained_C1_checkpoint.pt
+  EXECUTION_MODE=wam bash scripts/eval_cap_subtask.sh --ckpt "$CAP_SUBTASK_CKPT" \
+      --episodes 50 --shards 1 --retries 0 --name table1_c1_cap_wam
+C1 Hybrid 使用同一检查点，将 EXECUTION_MODE 改为 hybrid，另用唯一 --name。
+C0/C0H 待匹配配置完成后使用相同协议；本方案未用旧 hybrid.pt 冒充新 C1 权重。
+
+8. 统计、日志和结论标准
+
+SR(task, setting) = success_count / 50 × 100。
+Clean = 50 个任务 Clean 成功率的算术平均；Random 同理。
+Average = (Clean + Random) / 2。全部分母相同时等于对应 pooled rate。
+最终按一位小数展示，差值先用未四舍五入数据计算，单位为百分点。
+
+不能直接把现有 report.py 对“已完成任务”的平均值当作完整主表。
+必须检查每个模型 50 tasks × 2 settings、每格 50 条、共 5,000 条，且无未解决 error/重复场景。
+少一个任务或分片都标记 incomplete；不能用剩余容易任务的均值补位。
+本地 C0/C1 的差异建议报告按任务配对的 bootstrap 95% CI，保留同任务/场景的配对关系；
+只有本地配对结果可作这种比较，不能对没有逐场景记录的论文均值伪造配对显著性。
+
+除主表外记录：
+  每任务成功率、实际场景 seed/指令、失败类型；
+  τ0 调用次数、格式有效率、子任务语义抽查、阶段重复/遗漏和 memory；
+  程序解析/技能参数错误、Hybrid 代码接受率/动作占比/WAM 回退比例；
+  每次重规划及整回合延迟的中位数/P95、策略计算时间、GPU 峰值显存；
+  训练新增样本数/步数/有效 batch、数据和模型 hash、软件/模拟器/配置版本。
+
+主要结论来自 C1-C0 的 Average 和 Random，报告 Clean 是否退化；不能只挑最好的 Random。
+任何期望提升都是假设，当前无新模型实验结果，不填写预测成功率。
+
+9. 执行顺序与资源
+
+P0 协议固化：保存代码/模型/数据摘要，确定 instruction 池、场景清单、失败记账与统计检查。
+P1 环境检查：下载/加载 τ0，做当前三相机真实预测；WAM 单任务 Clean/Random 各 1 回合；
+   Hybrid 在 SAM3/感知资源可用后独立验证。单回合成功不视为完整任务性能。
+P2 数据：首先检查 8 个任务的小集，再完整准备每任务 50 条与全部缓存。
+P3 小规模训练/开发验证：先验证完整训练可运行，再决定正式预算。
+P4 正式训练：C0/C1，同起点、同示范、同预算，冻结正式检查点。
+P5 正式评测：先 R0/C0/C1 WAM，再 R1/C0H/C1H；每种设置统一配对场景。
+P6 完整性检查、主表/逐任务表/置信区间/成本和失败分析。
+
+8 个预注册开发任务：click_alarmclock、handover_block、stack_blocks_two、open_microwave、
+  put_object_cabinet、place_object_scale、pick_dual_bottles、stack_bowls_three。
+仅用于覆盖点击、交接、堆叠、关节物体、放置、双臂等行为，不代表总体性能。
+
+GPU 安排：
+  离线 τ0 缓存：GPU1 运行规划器，GPU0 可作不冲突的数据检查；缓存完成后停止规划器。
+  训练：两卡用于 C0 或 C1，顺序训练；不同时运行推理/感知服务。
+  WAM 在线评测：GPU0 低层，GPU1 τ0；单策略 worker，不在低层 GPU 上再放完整 9B。
+  Hybrid：还要运行 Molmo/SAM3/GraspNet。优先使用额外 GPU/远端感知服务；
+    若仅两卡，先做全模型共驻显存/吞吐测试并固定参数，不能假设当前配置可以容纳。
+  规划器、低层和感知共享资源的任何压缩/量化设置必须记录，匹配对照使用相同感知配置。
+
+工期先测量再估计：
+  训练时间约为每步实测时间 × 预定优化步数；
+  每种模型评测时间约为实测分任务/设置平均回合耗时 × 5,000，加模型启动/服务/日志开销；
+  离线规划调用数为所选轨迹 sum(ceil(episode_length/24))，乘实测 τ0 调用耗时。
+当前没有完整模型时延基准，不承诺固定小时数或几天完成。
+
+10. 后续实施需要补充的文件/功能（本次仅列入方案，未实现）
+
+训练：
+  configs/robotwin/data/cap_control.yaml：与 C1 同一示范/代码标签，不要求 τ0 条件。
+  configs/robotwin/task/cap_control_robotwin.yaml：C0 匹配训练预算和 prompt/code 容量。
+  configs/robotwin/eval/cap_control.yaml：同 helper、代码预算和推理设置，支持 WAM/Hybrid。
+  全部 50-task 的真实 dataset.yaml 清单、训练 seed/样本选择清单及对应条件缓存。
+
+评测：
+  独立的 Table 1 协议/driver：50 rollouts、固定场景/指令清单，勿依赖 standard 的 100 次默认值。
+  episode 级成功/失败/error/latency 日志，恢复时保留同一场景和原始尝试记录。
+  planner 无效输出的固定失败处理、真实 accepted scene seed/指令记录与跨方法配对校验。
+  完整 50-task 统计检查、配对置信区间和结果表生成。
+  checkpoint/run manifest 绑定 τ0 权重、数据/程序、归一化和推理配置 hash。
+
+本次实际新增的仅为本方案、plan.yaml 和 results_template.csv；没有修改运行模型或启动长任务。
+
+本次方案校验：
+  R0/R1 两条评测命令均完成真实脚本 dry-run：每方法 100 个 task/setting jobs、5,000 episodes。
+  plan.yaml 与现有 benchmark 的 50 项任务逐项一致；6 配置全矩阵计数为 30,000。
+  YAML/CSV 可解析，训练有效 batch 与配置一致；所有本地方法指标保留空白，未填入推测结果。
+  这些检查只验证方案/启动计划，不代表模型性能、训练可行性或 Hybrid 服务已经通过验证。
+
+来源与协议依据：
+  用户提供的 Table 1 图片（六行参考结果、50-task/50-rollout 口径）。
+  https://arxiv.org/html/2610.30136v1 （§3.1、Appendix J.2：训练数据、评测和 Hybrid 比较范围）。
+  https://robotwin-platform.github.io/leaderboard （当前榜单是每任务 100 trials，与本图口径不同）。
+  本地 configs/robotwin/benchmark.yaml、eval/{wam,hybrid,cap_subtask}.yaml。
+  本地 robotwin/eval/{benchmark,report}.py、robotwin/hybrid_eval/launch.py。
+  RoboTwin script/eval_policy.py 与 task_config/demo_{clean,randomized}.yml。
+  README.txt、validation/verification.json、原项目 reports/deployment-state.json。

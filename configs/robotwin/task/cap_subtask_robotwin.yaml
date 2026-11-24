@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - override /data: cap_subtask
+  - override /model: cap_subtask
+  - _self_
+
+batch_size: 1
+num_workers: 4
+gradient_accumulation_steps: 2
+mixed_precision: bf16
+model:
+  action_dim: 14
+  proprio_dim: 14
+  code_canvas: 124
+  infer_code_tokens: 124
+learning_rate: 1e-4
+weight_decay: 1e-2
+lr_scheduler_type: cosine
+num_epochs: 1
+max_steps: 15000
+save_every: 1000
+log_every: 20
+eval_every: 999999
+resume: null
+foundation_ckpt: ${paths.robotwin_hybrid_init_ckpt}

@@ -1,0 +1,2002 @@
+{
+  "agenticwam_commit": "275818e5787d59012eba4c43504342f1201ad25b",
+  "tau0_commit": "d804047f7b2d61c45077daada3183703aeed8cf5",
+  "files": {
+    ".gitignore": {
+      "source": "/home/yilianli/project/agentic-wam/.gitignore",
+      "sha256": "5785a19d549a657d969b1187e531edb0591b3fcddff5ab642871574203ead55b"
+    },
+    "LICENSE": {
+      "source": "/home/yilianli/project/agentic-wam/LICENSE",
+      "sha256": "a17a4c8bb64b08fa8bef75b2504f1c8317170d903e30ddc60f97a3c0957a0af1"
+    },
+    "configs/model/agenticwam_cosmos.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/model/agenticwam_cosmos.yaml",
+      "sha256": "9a75cce59fd6522f0c1cb2596840e3bf2df221421209d41a34adb20bbd0d8c31"
+    },
+    "configs/paths/default.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/paths/default.yaml",
+      "sha256": "d6cf6f33de0c4f82bf7e321b2f8aacdfb382e5f00b0945d598e4537a08716c11"
+    },
+    "configs/real_post_train/data/sharpa.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_post_train/data/sharpa.yaml",
+      "sha256": "4096e83dcd33ce70e84b5f6e2c0e1b442c43208755f846801dd6c2b0593d9732"
+    },
+    "configs/real_post_train/data/yam.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_post_train/data/yam.yaml",
+      "sha256": "ac5fdd90d0b4cd488cfab3ada3cb85c45ddaf280064ebaace65929ff7e2b62b5"
+    },
+    "configs/real_post_train/task/posttrain_sharpa.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_post_train/task/posttrain_sharpa.yaml",
+      "sha256": "6e0cb9632ace7d26b4acab870d146d71cbbc243c3096f05562547f20dbdb77db"
+    },
+    "configs/real_post_train/task/posttrain_yam.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_post_train/task/posttrain_yam.yaml",
+      "sha256": "0dd0c507f02158bad8bf50bc16eebb7964192f64155ea1ac69a7ace9c210d54e"
+    },
+    "configs/real_pre_train/data/pretrain_magic_soup.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_pre_train/data/pretrain_magic_soup.yaml",
+      "sha256": "0e6f7ab7dbc251b2d0e987de3902f220d81744b66b6b2f0dbd4aa18c82f998cb"
+    },
+    "configs/real_pre_train/task/pretrain_magic_soup.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/real_pre_train/task/pretrain_magic_soup.yaml",
+      "sha256": "e5c1bdc5a649b04463f22f64b11f8f7228ba9cc03e077ee6ae92d8a6af50d2fb"
+    },
+    "configs/robotwin/benchmark.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/benchmark.yaml",
+      "sha256": "5b5bbf63aa5b31149833aa26c6cb2c4e735b3b88044f3151b0ebbd373cbe6171"
+    },
+    "configs/robotwin/data/robotwin_cap.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/data/robotwin_cap.yaml",
+      "sha256": "729e0669cb40c59d89b70bb71d78f063c6ed70f95cf188b960cc7587e7c972b6"
+    },
+    "configs/robotwin/data/robotwin_official.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/data/robotwin_official.yaml",
+      "sha256": "c50fce326d9a0176c546616f70b129234aee6e36c34eb8b8a1732acc9b64c328"
+    },
+    "configs/robotwin/eval/hybrid.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/eval/hybrid.yaml",
+      "sha256": "82121ed5a38fb4271f1e6ce0d54a34e526396392f714442329267025c21b0921"
+    },
+    "configs/robotwin/eval/wam.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/eval/wam.yaml",
+      "sha256": "a01563503be9a93c7569761cbeb1c4f8e5452edbc3bd140f49bfafe33519a207"
+    },
+    "configs/robotwin/sim_robotwin.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/sim_robotwin.yaml",
+      "sha256": "259e4553b17e8a8661c18f797f41588c6c43184e281464277c7c4321b387b47d"
+    },
+    "configs/robotwin/site.example.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/site.example.yaml",
+      "sha256": "18f41f841c0cc7a962e2f47035d15940475ba549daa30c474d1651be961ca76a"
+    },
+    "configs/robotwin/task/robotwin_hybrid.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/task/robotwin_hybrid.yaml",
+      "sha256": "0d5b409e13d6bb881ddd40057363de3f1c20b06e60e0f0ef0132c2fe2c9402b3"
+    },
+    "configs/robotwin/task/robotwin_wam.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/task/robotwin_wam.yaml",
+      "sha256": "0650e6036534e3b87020f3286fd814c947bcd007bb596845dd9e0f946ce347d8"
+    },
+    "configs/robotwin/tasks/adjust_bottle/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/adjust_bottle/frozen_program.py",
+      "sha256": "191f99a22e4c9d85804cdea3110e7d2ed17d9bd680ed23bbab5281b73b6da624"
+    },
+    "configs/robotwin/tasks/adjust_bottle/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/adjust_bottle/preamble.txt",
+      "sha256": "79d9500cd86c976965ad6460859f384bcbadc6536f608626ec29f3711f1860e7"
+    },
+    "configs/robotwin/tasks/adjust_bottle/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/adjust_bottle/task.yaml",
+      "sha256": "139b3316f8345bc31e054acfe07a562660e82982e1048a09d0c24e5f072c0831"
+    },
+    "configs/robotwin/tasks/beat_block_hammer/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/beat_block_hammer/frozen_program.py",
+      "sha256": "1e9548dc3d2cdee072bebaedde1d7971ab26caa8da41107163fa89aa2aa3070a"
+    },
+    "configs/robotwin/tasks/beat_block_hammer/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/beat_block_hammer/preamble.txt",
+      "sha256": "13b80fe9aab5bee3d4ad189ce0a97c8083c3fcc0e071b61fb0f56ac05b82b011"
+    },
+    "configs/robotwin/tasks/beat_block_hammer/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/beat_block_hammer/task.yaml",
+      "sha256": "f0004d64cae61fc70ac00fff00d4899f4a9fc43d41798a539ab708813fa4e8e7"
+    },
+    "configs/robotwin/tasks/blocks_ranking_rgb/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_rgb/frozen_program.py",
+      "sha256": "f8bdd6e715bfa046f264ef95f183e206c5c2963a7cfca9bd7e2b06c08f41b82d"
+    },
+    "configs/robotwin/tasks/blocks_ranking_rgb/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_rgb/preamble.txt",
+      "sha256": "8f0eb332b69e9447ff3a38e009c904086a01d0545af27fc7993cd9d9cc74073c"
+    },
+    "configs/robotwin/tasks/blocks_ranking_rgb/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_rgb/task.yaml",
+      "sha256": "cd4c6ef32f04437628073baae71795ffc8b5e0dcfa026b644f36f2cd10c6f6f0"
+    },
+    "configs/robotwin/tasks/blocks_ranking_size/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_size/frozen_program.py",
+      "sha256": "de9e2b6b74120f843bb233d6eac9e4c807b68e6ab97c8f8ac9691cc970a5c081"
+    },
+    "configs/robotwin/tasks/blocks_ranking_size/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_size/preamble.txt",
+      "sha256": "ac682abd21b0869f52402ee52d897d83393a604aff6e8581c8af47f83158b666"
+    },
+    "configs/robotwin/tasks/blocks_ranking_size/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/blocks_ranking_size/task.yaml",
+      "sha256": "74f3babc9645ac7ab2e21fa77d7d6e0ce7eba864042f597ed4b071814e288720"
+    },
+    "configs/robotwin/tasks/click_alarmclock/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_alarmclock/frozen_program.py",
+      "sha256": "3a5aa34a77c13e30cac54d979746954e930eb378757efe9661b3ac2693b2f1b4"
+    },
+    "configs/robotwin/tasks/click_alarmclock/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_alarmclock/preamble.txt",
+      "sha256": "91684eaf806dcfc9fa8f714132786d8655798529b8cc9e1d011135db6d1766c6"
+    },
+    "configs/robotwin/tasks/click_alarmclock/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_alarmclock/task.yaml",
+      "sha256": "82ddf23873ac712afdd04a513277878d7058f2f2cd0492d3a3c83da533c65f9e"
+    },
+    "configs/robotwin/tasks/click_bell/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_bell/frozen_program.py",
+      "sha256": "9ca1b12c33b6ca430744bae913ee67f873f30268f7296aeb8dafe75a4fee8d2a"
+    },
+    "configs/robotwin/tasks/click_bell/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_bell/preamble.txt",
+      "sha256": "ec90ac1a0a58fff9a1aa0ec99c08828ed63aae786def2de837a681160dce270e"
+    },
+    "configs/robotwin/tasks/click_bell/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/click_bell/task.yaml",
+      "sha256": "cfd2994b0132d875d1c2fc7a99fbfa847ed96bdb4d79ddca3e1dfa44f4845549"
+    },
+    "configs/robotwin/tasks/dump_bin_bigbin/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/dump_bin_bigbin/frozen_program.py",
+      "sha256": "cb69daa59457a4fdde35b452228cf56571413c8639b9e412841a6defa6664ad7"
+    },
+    "configs/robotwin/tasks/dump_bin_bigbin/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/dump_bin_bigbin/preamble.txt",
+      "sha256": "0eafbd22d52a008a416c98dca874ae23ef69b044aa6c473fb490fcd25ecdd6a3"
+    },
+    "configs/robotwin/tasks/dump_bin_bigbin/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/dump_bin_bigbin/task.yaml",
+      "sha256": "cf087c205a94c2d2ad5babe688bdd10010578aa07fd9cf245088e33009481c76"
+    },
+    "configs/robotwin/tasks/grab_roller/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/grab_roller/frozen_program.py",
+      "sha256": "96dc03b22a8157e4a2c3b1f6f682631b3bf8d0bfdc506c1d6bb2ef96f3aca1b8"
+    },
+    "configs/robotwin/tasks/grab_roller/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/grab_roller/preamble.txt",
+      "sha256": "24cc4a14aab00bb0a8b28790ba0786169f9dadd36f3a13312267407e8e9d1bff"
+    },
+    "configs/robotwin/tasks/grab_roller/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/grab_roller/task.yaml",
+      "sha256": "2497879c21676102f2b9b2f29301bca1bd18ce0a75365b26bc564625c2e4f157"
+    },
+    "configs/robotwin/tasks/handover_block/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_block/frozen_program.py",
+      "sha256": "435cbbb62588e0d80c61bbe1249c90bc4191bce31635b044075d747e697b778a"
+    },
+    "configs/robotwin/tasks/handover_block/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_block/preamble.txt",
+      "sha256": "6cf96818ceb0f6a64aea1c524896e25807a276e9aabdc33bfeb324e84a94e4e6"
+    },
+    "configs/robotwin/tasks/handover_block/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_block/task.yaml",
+      "sha256": "5640154a1839c89c46ce58ba57af394e87513dcd4e0097cd606e890b8723db0e"
+    },
+    "configs/robotwin/tasks/handover_mic/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_mic/frozen_program.py",
+      "sha256": "a1122fea6d26f162fe4cb01f9982cc80d548ce8a531746b56468b95fa29f895f"
+    },
+    "configs/robotwin/tasks/handover_mic/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_mic/preamble.txt",
+      "sha256": "5acb6af213181b1d48cb870a453c3b61cd0f11d7cce56375ea6d1d2c8cad1cdb"
+    },
+    "configs/robotwin/tasks/handover_mic/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/handover_mic/task.yaml",
+      "sha256": "72a4d64f3a65df8dbbbda2348ad754f942598e0b33a91e64d9b5ef805e333080"
+    },
+    "configs/robotwin/tasks/hanging_mug/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/hanging_mug/frozen_program.py",
+      "sha256": "620b3c2788191ed7c579d97bb5bc1a3592135f0096820e42fb194d0da066bf01"
+    },
+    "configs/robotwin/tasks/hanging_mug/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/hanging_mug/preamble.txt",
+      "sha256": "fdf0c1a8eab1d19e6f7ef38b8233d70228102345f914c7842db036d9f5c0c8db"
+    },
+    "configs/robotwin/tasks/hanging_mug/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/hanging_mug/task.yaml",
+      "sha256": "6bfa44e4dff4be053844ba5ba91dd4675a10b0d768e6d11082c636c86bdcc0d1"
+    },
+    "configs/robotwin/tasks/lift_pot/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/lift_pot/frozen_program.py",
+      "sha256": "7721e4807323d028724d89a129a4e372c0c9dee11dd06d86f5ac2cab73edb5b1"
+    },
+    "configs/robotwin/tasks/lift_pot/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/lift_pot/preamble.txt",
+      "sha256": "a0c34af4277fc826dde28f13bb2b1d7e22fd8c9b50cea9595b8f5cebbdb71642"
+    },
+    "configs/robotwin/tasks/lift_pot/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/lift_pot/task.yaml",
+      "sha256": "3a5905a151582d78a9f188a80a966e512b3bc4d94d47ad909b3d1e13b19c7a9d"
+    },
+    "configs/robotwin/tasks/move_can_pot/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_can_pot/frozen_program.py",
+      "sha256": "7065b358ef04b631ee8b26cfaa0ae4e16830f8e2d819153f2f2daabd6ae4473e"
+    },
+    "configs/robotwin/tasks/move_can_pot/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_can_pot/preamble.txt",
+      "sha256": "48cf935c93cd705fd2385c7ee2c5aab64ced3a1eef3c1292d3d96ad419bcb5e1"
+    },
+    "configs/robotwin/tasks/move_can_pot/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_can_pot/task.yaml",
+      "sha256": "92e8ba462a1f1e8945400097eb03c31213ef1c0804fc3a1a01dd5e198017f7bb"
+    },
+    "configs/robotwin/tasks/move_pillbottle_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_pillbottle_pad/frozen_program.py",
+      "sha256": "99efbf6b23d5a4ee299c6f958da598f2189882614a6083131d9daba0349dafb4"
+    },
+    "configs/robotwin/tasks/move_pillbottle_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_pillbottle_pad/preamble.txt",
+      "sha256": "5e40cdd0af86023592b8e71e51d8343c4475453f0df4ad3af244252f91e08fee"
+    },
+    "configs/robotwin/tasks/move_pillbottle_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_pillbottle_pad/task.yaml",
+      "sha256": "3dc6da34fba883efb81661119c7f0a8bb1e9693610b9c6a857eee8a49a582acc"
+    },
+    "configs/robotwin/tasks/move_playingcard_away/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_playingcard_away/frozen_program.py",
+      "sha256": "554aacdf85f883e2b4155f4ba8290d8ac8265c67dd2fde9951ae363f0c31716a"
+    },
+    "configs/robotwin/tasks/move_playingcard_away/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_playingcard_away/preamble.txt",
+      "sha256": "04d41a17cf74e98352e9a3f0f682ae09fd22598d512603baff018fa9aa67ffc2"
+    },
+    "configs/robotwin/tasks/move_playingcard_away/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_playingcard_away/task.yaml",
+      "sha256": "7f3ee6bdafbafa30c591583ae0aeadc6b8e7120bb3ae2ba02be2c1055d6b728d"
+    },
+    "configs/robotwin/tasks/move_stapler_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_stapler_pad/frozen_program.py",
+      "sha256": "a27cae30a96164378494052147c5c5d15149570b4579dd155a0952bff3b97ca4"
+    },
+    "configs/robotwin/tasks/move_stapler_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_stapler_pad/preamble.txt",
+      "sha256": "b933dd60f01b904337da15ea0347f9a531ef372be84afe6199b99a5dd5a0bfe9"
+    },
+    "configs/robotwin/tasks/move_stapler_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/move_stapler_pad/task.yaml",
+      "sha256": "244718532957e5d27c27550d89bf2b33b5b90a2f94f9797a01dd796c806c3a65"
+    },
+    "configs/robotwin/tasks/open_laptop/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_laptop/frozen_program.py",
+      "sha256": "e792c8a10d3a11833456cf318004e94750727326542f96da2273396fdba04611"
+    },
+    "configs/robotwin/tasks/open_laptop/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_laptop/preamble.txt",
+      "sha256": "ff5055ff02f7d0a031ae81cb3f6773972a46922f34eabc080c1ebc327c04c096"
+    },
+    "configs/robotwin/tasks/open_laptop/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_laptop/task.yaml",
+      "sha256": "c90f8bdb0508524d29cc536073630d82a36b391184c489d16aa829864efc4d02"
+    },
+    "configs/robotwin/tasks/open_microwave/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_microwave/frozen_program.py",
+      "sha256": "16553a149ac133004605eb77fbfe83f428d88b3466dfccd8495e445db1e7da92"
+    },
+    "configs/robotwin/tasks/open_microwave/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_microwave/preamble.txt",
+      "sha256": "3902f6e1088c83e8e505515ae667397da8610bb92075cc3be9cb9c87c39e24e7"
+    },
+    "configs/robotwin/tasks/open_microwave/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/open_microwave/task.yaml",
+      "sha256": "7e8dbc31833f73adc3205816612ad43a446305e1dc33b5c69207c492347c4de6"
+    },
+    "configs/robotwin/tasks/pick_diverse_bottles/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_diverse_bottles/frozen_program.py",
+      "sha256": "354e5e3f2cd6ba57b6100946543280c7710c684ecb5b775fb8f38f41ea4fe1ee"
+    },
+    "configs/robotwin/tasks/pick_diverse_bottles/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_diverse_bottles/preamble.txt",
+      "sha256": "52258401c910bcc056146017d2d8bb0fddcb827ecc01df3ff416464096dc7b3c"
+    },
+    "configs/robotwin/tasks/pick_diverse_bottles/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_diverse_bottles/task.yaml",
+      "sha256": "869f69d14cc8aa45c488df3a206e78920bb1e31c79064cc1c505e56a791c433a"
+    },
+    "configs/robotwin/tasks/pick_dual_bottles/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_dual_bottles/frozen_program.py",
+      "sha256": "3e179f9c2bebc4becfcdd1be813e51404c6ce5037ea7fa60e3ce4b646bbd2dee"
+    },
+    "configs/robotwin/tasks/pick_dual_bottles/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_dual_bottles/preamble.txt",
+      "sha256": "1c3215c0d48fcc5411d2ba58511c086c399dab45aa1bff8ff017f92465ffb5f7"
+    },
+    "configs/robotwin/tasks/pick_dual_bottles/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/pick_dual_bottles/task.yaml",
+      "sha256": "1e5229236d644393050100f612fd523c099b0e8debdfa9e5a7c3c5b76e18817f"
+    },
+    "configs/robotwin/tasks/place_a2b_left/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_left/frozen_program.py",
+      "sha256": "9a1530f258f8445fe85a2bf19d1a3ce8add6020ef9bacc38fc9f1bab259313cc"
+    },
+    "configs/robotwin/tasks/place_a2b_left/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_left/preamble.txt",
+      "sha256": "304449f65facd3c6afa74ae9860a9a42a6d919c2561325ad0b539a5c550249ca"
+    },
+    "configs/robotwin/tasks/place_a2b_left/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_left/task.yaml",
+      "sha256": "9ae51233e9829c42613c91bcab32d6fa41a6df49be12d7301c89a9c63d4172d5"
+    },
+    "configs/robotwin/tasks/place_a2b_right/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_right/frozen_program.py",
+      "sha256": "51b760de30d7131a7cac0329063784503e259c5ad406002937eac886335ad37f"
+    },
+    "configs/robotwin/tasks/place_a2b_right/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_right/preamble.txt",
+      "sha256": "dcc64b60e10c4401e98b1b3d6f0cc3e1c99ebf2e7b8f429c4fde4075d9a64528"
+    },
+    "configs/robotwin/tasks/place_a2b_right/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_a2b_right/task.yaml",
+      "sha256": "21cfffe334a766de1e91ceca20d11c1bef4bd5d901dc8c14a32b13d3420fa8eb"
+    },
+    "configs/robotwin/tasks/place_bread_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_basket/frozen_program.py",
+      "sha256": "b5a477a89ef9fafc4d30e10acc8fc2eee23b79eaf506f70f882bc4203b959eec"
+    },
+    "configs/robotwin/tasks/place_bread_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_basket/preamble.txt",
+      "sha256": "75dd5c4c3f7be2fe020809c7ff4ae0eba5b7bb00d2b573aae85f2135fc7e0df3"
+    },
+    "configs/robotwin/tasks/place_bread_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_basket/task.yaml",
+      "sha256": "319dcd5b5035fd06955efa55a74e439ac1f3bce2582e8bc6c2276365fa2a55c7"
+    },
+    "configs/robotwin/tasks/place_bread_skillet/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_skillet/frozen_program.py",
+      "sha256": "3cd9efc963155e4542e2f32b7d4df1afedc1acb889f4490483ad04e58f78ce0e"
+    },
+    "configs/robotwin/tasks/place_bread_skillet/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_skillet/preamble.txt",
+      "sha256": "96073bc1434ca40c2102f639f0c65c4f4ed5c6332e563aae90b060678483f384"
+    },
+    "configs/robotwin/tasks/place_bread_skillet/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_bread_skillet/task.yaml",
+      "sha256": "91d5e6c7e4c9e07e6e2e477de9a256dea35e1182513e4e1c7231a75ec5508499"
+    },
+    "configs/robotwin/tasks/place_burger_fries/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_burger_fries/frozen_program.py",
+      "sha256": "30f936b293cd26c4bbf54e0db3711dd87657ffb540c4954352cdfd414b9c27ff"
+    },
+    "configs/robotwin/tasks/place_burger_fries/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_burger_fries/preamble.txt",
+      "sha256": "ed885be15025a095fb0617b68c9c4ca2e327372fcae720a9a8fbaef62282520f"
+    },
+    "configs/robotwin/tasks/place_burger_fries/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_burger_fries/task.yaml",
+      "sha256": "6be6a5f63fdc71462de18e922ff0237654bba2ee09858b0e7002a3362f074388"
+    },
+    "configs/robotwin/tasks/place_can_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_can_basket/frozen_program.py",
+      "sha256": "049f4c957b9892eb0fc50ecba42be9ffe4ea59403a248519213291dc65883508"
+    },
+    "configs/robotwin/tasks/place_can_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_can_basket/preamble.txt",
+      "sha256": "31d87c6f9bdb8f432d984b72f0dcda9fb14b170695777dcce7ad90bd5ff81da8"
+    },
+    "configs/robotwin/tasks/place_can_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_can_basket/task.yaml",
+      "sha256": "ceda31e7af25b12b7a46a3c8b64969fb794079380b4e7d1d27fbd8cc190cf2e2"
+    },
+    "configs/robotwin/tasks/place_cans_plasticbox/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_cans_plasticbox/frozen_program.py",
+      "sha256": "ee8192d85c868eda3313add4707de7ac3f29a8563abd8b0cfcf5811e4ecdb513"
+    },
+    "configs/robotwin/tasks/place_cans_plasticbox/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_cans_plasticbox/preamble.txt",
+      "sha256": "2138d1e8fdc3140db838afb151a20e58725c5ecc18696198866c02ccf3b674f2"
+    },
+    "configs/robotwin/tasks/place_cans_plasticbox/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_cans_plasticbox/task.yaml",
+      "sha256": "11ac039687cf537fef81e23e532ae62f3c5703103db8990f4f3446e1acbc4395"
+    },
+    "configs/robotwin/tasks/place_container_plate/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_container_plate/frozen_program.py",
+      "sha256": "0d9b6e03f4664c86157ab1e8c4eea21c11c6ce8ce1ae3b1030a68d86311dbdcf"
+    },
+    "configs/robotwin/tasks/place_container_plate/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_container_plate/preamble.txt",
+      "sha256": "39206aaf0bc3462afe729d55c8f8f745d9310e8fc3a306acfca04f9c2d37d7cb"
+    },
+    "configs/robotwin/tasks/place_container_plate/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_container_plate/task.yaml",
+      "sha256": "1ce2953ae17ad296006bd3fd38dd45ecb7492d8ee85deb27c3deb40a7ee0bbc0"
+    },
+    "configs/robotwin/tasks/place_dual_shoes/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_dual_shoes/frozen_program.py",
+      "sha256": "717880c2ce25cb2c30bd6dc30e54b6ec2e116b052fbaac4a3045e3aedb7c6949"
+    },
+    "configs/robotwin/tasks/place_dual_shoes/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_dual_shoes/preamble.txt",
+      "sha256": "df50f39f16c80dd35152135c3ae1543d16b5bdfc7e25a6a26f8805e111e1565a"
+    },
+    "configs/robotwin/tasks/place_dual_shoes/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_dual_shoes/task.yaml",
+      "sha256": "b1e9d5ae015c15086a0d8452e508ba4c50fda35795367e807cd2b46f59dae37c"
+    },
+    "configs/robotwin/tasks/place_empty_cup/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_empty_cup/frozen_program.py",
+      "sha256": "dce2aeeca0e05cc8f644d04ba3acdb9f9170761d64f432582dd4279ac189109b"
+    },
+    "configs/robotwin/tasks/place_empty_cup/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_empty_cup/preamble.txt",
+      "sha256": "aca97b45e19a498177da2b12775d8cc1af2ee3fcc391cee355e8514dd0ea568b"
+    },
+    "configs/robotwin/tasks/place_empty_cup/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_empty_cup/task.yaml",
+      "sha256": "a9859cb86b0075d38cebcb1ce8574c64659584fc722e3a9389aac0909b3390c7"
+    },
+    "configs/robotwin/tasks/place_fan/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_fan/frozen_program.py",
+      "sha256": "6a6eed374d9b5da4297ecd502a96026df53d4e279f3fbfaf7ea89019c4cd34e7"
+    },
+    "configs/robotwin/tasks/place_fan/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_fan/preamble.txt",
+      "sha256": "f043ec87ea96f14dca7024b6f23a60ee975117d0d3ea977f544db3161c6d7d25"
+    },
+    "configs/robotwin/tasks/place_fan/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_fan/task.yaml",
+      "sha256": "85021056ee1f07ee79aa5cf3418e469d0908d086c462673e55801f8960e8d729"
+    },
+    "configs/robotwin/tasks/place_mouse_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_mouse_pad/frozen_program.py",
+      "sha256": "e2f592df12b52626533faaa462821a93abf9c658d1c4084305e9a90e74d47366"
+    },
+    "configs/robotwin/tasks/place_mouse_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_mouse_pad/preamble.txt",
+      "sha256": "35bfc4b1a879e8d6a58ac4e2a0df5be05c2d64c49e9e74d5fe01f56dae64e98e"
+    },
+    "configs/robotwin/tasks/place_mouse_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_mouse_pad/task.yaml",
+      "sha256": "43566236185163e32804d867761be2c9de076c42f3d8526035482eaf642d5f66"
+    },
+    "configs/robotwin/tasks/place_object_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_basket/frozen_program.py",
+      "sha256": "e034978b6e2c46cefe7c7f4c61de91fae95ef5a01eea8e17889e17fe492ca8ac"
+    },
+    "configs/robotwin/tasks/place_object_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_basket/preamble.txt",
+      "sha256": "fedd43966d30b80ddd36c975e925a9eba223a6d456374beff2c3f9aa07f87ab1"
+    },
+    "configs/robotwin/tasks/place_object_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_basket/task.yaml",
+      "sha256": "3392fcdb63a21b74e9b0986519463ccb4d147242836726d495878727960241d2"
+    },
+    "configs/robotwin/tasks/place_object_scale/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_scale/frozen_program.py",
+      "sha256": "f319e5c593f797ed8309ec605bcdc29d1b18c36d02e120e3337466dc128a4c20"
+    },
+    "configs/robotwin/tasks/place_object_scale/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_scale/preamble.txt",
+      "sha256": "2d56683ccc3fee3bdae8da850590034b7ae9569ded93a14c12c7adc1c2dc9334"
+    },
+    "configs/robotwin/tasks/place_object_scale/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_scale/task.yaml",
+      "sha256": "9b65c28f7b10090cca3d1d199c00c18f698fe2532e947aa6e0724b4fee15dffb"
+    },
+    "configs/robotwin/tasks/place_object_stand/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_stand/frozen_program.py",
+      "sha256": "166d8334518b2ea4efc7958c065717068fa17d8fb457662eea7982292e9f0e2a"
+    },
+    "configs/robotwin/tasks/place_object_stand/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_stand/preamble.txt",
+      "sha256": "ced6fe47f6d7225ca52f7de3c4c37501e55ac9484b0a639eb8d79982315ad767"
+    },
+    "configs/robotwin/tasks/place_object_stand/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_object_stand/task.yaml",
+      "sha256": "38fa6aced30d725eaf70df64307baeecd3e60f0a8c4e18d24f2aaed16b9e71e0"
+    },
+    "configs/robotwin/tasks/place_phone_stand/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_phone_stand/frozen_program.py",
+      "sha256": "38cde6311ee30cb1994be5f27d2a1e2779d2aaffe8d142cac82c9a08e6844656"
+    },
+    "configs/robotwin/tasks/place_phone_stand/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_phone_stand/preamble.txt",
+      "sha256": "7f2b8836e043ec092618a982b888483e780e7f004fcdb51bc86bab0b387b3874"
+    },
+    "configs/robotwin/tasks/place_phone_stand/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_phone_stand/task.yaml",
+      "sha256": "fd8703255869e58665984bd097cc107c8de7ccad9c5112be3bc5472718997255"
+    },
+    "configs/robotwin/tasks/place_shoe/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_shoe/frozen_program.py",
+      "sha256": "460a5aab07b1dff71608ed2c54c825db747dd38cda8897e003c38cf1c5ca8580"
+    },
+    "configs/robotwin/tasks/place_shoe/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_shoe/preamble.txt",
+      "sha256": "37613490ce9a2f5985be706e4181b6d9e0ded944f2a33ad12ecff8790161bdc1"
+    },
+    "configs/robotwin/tasks/place_shoe/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/place_shoe/task.yaml",
+      "sha256": "645b1071408bdd104397e11a11f17b393f13d2a588122d49b2dd931c8049fca4"
+    },
+    "configs/robotwin/tasks/press_stapler/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/press_stapler/frozen_program.py",
+      "sha256": "3dc8bbc7a0398b3bab1cdad00014d4f41b50e7f6de15a482f6a6542dc0b8aede"
+    },
+    "configs/robotwin/tasks/press_stapler/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/press_stapler/preamble.txt",
+      "sha256": "351a2b35e7053fd1e26330900db3d2421a00d97c850e052c893b20371415ecc3"
+    },
+    "configs/robotwin/tasks/press_stapler/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/press_stapler/task.yaml",
+      "sha256": "a1ffa47533690d3ed7901a99d9914c4d5d3080ef3c8c50f68024216ce35245e3"
+    },
+    "configs/robotwin/tasks/put_bottles_dustbin/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_bottles_dustbin/frozen_program.py",
+      "sha256": "41b5a342665c71b593c20d1dfa9b2e8db2c73b712dfd9ee057767cbb54f360ad"
+    },
+    "configs/robotwin/tasks/put_bottles_dustbin/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_bottles_dustbin/preamble.txt",
+      "sha256": "0fec12f4780c1d57b780fce73587ecd82f8ea5e28e14db761771346fb51733ef"
+    },
+    "configs/robotwin/tasks/put_bottles_dustbin/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_bottles_dustbin/task.yaml",
+      "sha256": "fd531bf49b55a2d509c8d35c2f737a7168f5e886e85fde3c8d1bd48a31553f6a"
+    },
+    "configs/robotwin/tasks/put_object_cabinet/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_object_cabinet/frozen_program.py",
+      "sha256": "fe4786225f91575d24559f189d836821b07baeedf428e203e193ed7c76a10df3"
+    },
+    "configs/robotwin/tasks/put_object_cabinet/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_object_cabinet/preamble.txt",
+      "sha256": "f5ec8881322c584117ecff992c85addbd4d7079c136682d0949eb51c036cb916"
+    },
+    "configs/robotwin/tasks/put_object_cabinet/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/put_object_cabinet/task.yaml",
+      "sha256": "7309dc9b6741cdea5fcee083f7af096a566f1fba9a0b2d63c22d5248ce090c6f"
+    },
+    "configs/robotwin/tasks/rotate_qrcode/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/rotate_qrcode/frozen_program.py",
+      "sha256": "8017dccf81230afcde6ac6701748a50d6b1de34dcec08dcab134c52ede068c3a"
+    },
+    "configs/robotwin/tasks/rotate_qrcode/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/rotate_qrcode/preamble.txt",
+      "sha256": "a48a4bdc91c40bd9677634b9aed8ad2c186f36c667986312510729a52550568f"
+    },
+    "configs/robotwin/tasks/rotate_qrcode/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/rotate_qrcode/task.yaml",
+      "sha256": "e9f23664650eb3b7a06b58a0bca506cba4ee3105ff4af68a93a9b25659e43bd9"
+    },
+    "configs/robotwin/tasks/scan_object/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/scan_object/frozen_program.py",
+      "sha256": "c1a61928d443787e31947cf8b96ef1e86e45ae3de9d83a38dbc9596af2238bd0"
+    },
+    "configs/robotwin/tasks/scan_object/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/scan_object/preamble.txt",
+      "sha256": "af2b54ed252930d92f4138996f82596d36e44393e9e42c9dfd92e6432a188ac9"
+    },
+    "configs/robotwin/tasks/scan_object/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/scan_object/task.yaml",
+      "sha256": "2ffb3fee1bcc854b4bebb2919941a032df917e72e22efc6c95b5073f61f09a6c"
+    },
+    "configs/robotwin/tasks/shake_bottle/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle/frozen_program.py",
+      "sha256": "f1c43284ee34062731b4c5f9be51118e5c9865b5b5fd5b5def2655a2c25e7c4a"
+    },
+    "configs/robotwin/tasks/shake_bottle/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle/preamble.txt",
+      "sha256": "d41d267a4529a39ec60ed3e9ce0dc3fc00c512127ebd4f6547adcda2ff400fac"
+    },
+    "configs/robotwin/tasks/shake_bottle/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle/task.yaml",
+      "sha256": "11225c08c097107952f9ebe3bf95ef8b71d1085266d14ae44d00aa8966e693dd"
+    },
+    "configs/robotwin/tasks/shake_bottle_horizontally/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle_horizontally/frozen_program.py",
+      "sha256": "0741c488bd086a49589e342ecb77029ba437fd6bca55958ecfaf4c270f584631"
+    },
+    "configs/robotwin/tasks/shake_bottle_horizontally/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle_horizontally/preamble.txt",
+      "sha256": "9a38621b100c6871407d33fa2e56371fad8aa070c876c39107a7ed42e7babaf8"
+    },
+    "configs/robotwin/tasks/shake_bottle_horizontally/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/shake_bottle_horizontally/task.yaml",
+      "sha256": "d8c9b7d5503aaff70fb7383edd8eba22e3bde1075fe5de578896cf885e0d9711"
+    },
+    "configs/robotwin/tasks/stack_blocks_three/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_three/frozen_program.py",
+      "sha256": "adf40138c91f5bc36d931d7395b8b8d6cdfd27d1d6cc3eed2405cc95423dd616"
+    },
+    "configs/robotwin/tasks/stack_blocks_three/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_three/preamble.txt",
+      "sha256": "c71b75db94ac0cf37f56c380c3ceacf748497f2640e14bc9d8c41523284053c4"
+    },
+    "configs/robotwin/tasks/stack_blocks_three/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_three/task.yaml",
+      "sha256": "83ed64f1c4f69ead1d83a36aa744fc5f9ee14fae4c0a5f11575e16ce4c199313"
+    },
+    "configs/robotwin/tasks/stack_blocks_two/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_two/frozen_program.py",
+      "sha256": "d9f4faba680a9e10b16205b0ee10907275ec2f0d0361d2a7e9605b43e470eaeb"
+    },
+    "configs/robotwin/tasks/stack_blocks_two/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_two/preamble.txt",
+      "sha256": "7207bbcf07e9d66a462bd6caf6cdaf5ab21ae88688a96270421abdf9d3f63361"
+    },
+    "configs/robotwin/tasks/stack_blocks_two/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_blocks_two/task.yaml",
+      "sha256": "b075afb53768a43f0172fb0c96a98080d8962c8561cac659a1a8b43af4170101"
+    },
+    "configs/robotwin/tasks/stack_bowls_three/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_three/frozen_program.py",
+      "sha256": "f8b9105bc9c8cdbf44cc6f0a3d221c72b74e744917ee44d55c0742c9e825c150"
+    },
+    "configs/robotwin/tasks/stack_bowls_three/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_three/preamble.txt",
+      "sha256": "40ebe5f31b8413ed9a4c2f896f559e2188963932f5c6591185a03bfa17e4c7a8"
+    },
+    "configs/robotwin/tasks/stack_bowls_three/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_three/task.yaml",
+      "sha256": "f94d4fb618607a25b0e5ae7f452da2c3be9d7eca10710283f432cb80f0858358"
+    },
+    "configs/robotwin/tasks/stack_bowls_two/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_two/frozen_program.py",
+      "sha256": "f1952d3d8359f365463a03eeedcf17aa96af7494b91559497f6ba99df4cc09ad"
+    },
+    "configs/robotwin/tasks/stack_bowls_two/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_two/preamble.txt",
+      "sha256": "c21fc88c541f62128f9aa8c2ff58a0caa94589ed60ee0e9a5e8e6ba0c2e5713a"
+    },
+    "configs/robotwin/tasks/stack_bowls_two/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stack_bowls_two/task.yaml",
+      "sha256": "5ed18b651c3e74cc2ae335992ed77dcb19095e11ecac4e54aee95fabf8db36d0"
+    },
+    "configs/robotwin/tasks/stamp_seal/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stamp_seal/frozen_program.py",
+      "sha256": "7eb46e2e2e39b69d4b3967ea923c9cfe0c8123211b0901528168a3bb8f2bf451"
+    },
+    "configs/robotwin/tasks/stamp_seal/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stamp_seal/preamble.txt",
+      "sha256": "59d6487f3dcddc4cea4dbc90fc4bd9db124947d3593b7d21a59b31c3204814d1"
+    },
+    "configs/robotwin/tasks/stamp_seal/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/stamp_seal/task.yaml",
+      "sha256": "a25fa716e21ede0c44047b2efe5c41ea95a6ea5e99245d13894c4e7910020df0"
+    },
+    "configs/robotwin/tasks/turn_switch/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/turn_switch/frozen_program.py",
+      "sha256": "d7582b389ac2634cc686eca7bb7cdc2414ec39995b345e5fd2214d20dd465302"
+    },
+    "configs/robotwin/tasks/turn_switch/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/turn_switch/preamble.txt",
+      "sha256": "a232bd5163856c440637f3ff630fb295512acf12c4307e26a8f04100f780bc52"
+    },
+    "configs/robotwin/tasks/turn_switch/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks/turn_switch/task.yaml",
+      "sha256": "e34c9a3b1524d78fd2d1fbdeb1d718328ddd3d10bc8011a900708943c7cdf404"
+    },
+    "configs/robotwin/tasks_indep/adjust_bottle/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/adjust_bottle/frozen_program.py",
+      "sha256": "4d63422a76cd4b6d99c8f2d069c730fbe0ca7fbb14d291f026f1b0076e400ee5"
+    },
+    "configs/robotwin/tasks_indep/adjust_bottle/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/adjust_bottle/preamble.txt",
+      "sha256": "c04c5e2dd1acee1b04af6266ceaa384341f29cbc45ebc180ce2f3e3fa0e84db4"
+    },
+    "configs/robotwin/tasks_indep/adjust_bottle/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/adjust_bottle/task.yaml",
+      "sha256": "812ccb8234a0705782091676b54d1e549909dab063755237b834d1cb3b9b5c25"
+    },
+    "configs/robotwin/tasks_indep/beat_block_hammer/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/beat_block_hammer/frozen_program.py",
+      "sha256": "4168da4a39568a830c68bc6f8941b33b40d9cda8750b4fa27d5fcda4540be0c1"
+    },
+    "configs/robotwin/tasks_indep/beat_block_hammer/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/beat_block_hammer/preamble.txt",
+      "sha256": "e2bbd210638b744d9c4ba809880e89cffdc901182fe49397a109e63ae599d913"
+    },
+    "configs/robotwin/tasks_indep/beat_block_hammer/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/beat_block_hammer/task.yaml",
+      "sha256": "89e6c2867c98421f1fb0fb1e0814579df9fbf952958a6451dc173367a1d306bc"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_rgb/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_rgb/frozen_program.py",
+      "sha256": "d51202ea21c9eb4151c313f0c8b9f9273bdbe74b6e04c66ccbe546793b91bdaa"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_rgb/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_rgb/preamble.txt",
+      "sha256": "256bab1f33ed0b581f09e6bcdc15464e54ae9c5f8d9388b6937f8902797248af"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_rgb/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_rgb/task.yaml",
+      "sha256": "3e9074260084679d3259001d1541c8d719205011c9fbd1d08a021fa9ea878da5"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_size/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_size/frozen_program.py",
+      "sha256": "7adcd5d368fc2051594f3bea0e8e5ddfc4a546ad98d242967a94ce8f3701a733"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_size/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_size/preamble.txt",
+      "sha256": "33864ebec162db4d197e39f403772bda1dbc90b76eb0e230ff5360c88a5754b9"
+    },
+    "configs/robotwin/tasks_indep/blocks_ranking_size/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/blocks_ranking_size/task.yaml",
+      "sha256": "c66bf90f604adbcf8c3857d0c133a6c8632bf605af818c5749632b02dfa5aec6"
+    },
+    "configs/robotwin/tasks_indep/click_alarmclock/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_alarmclock/frozen_program.py",
+      "sha256": "c6e4c04eda5cf0c68093fdf5af9d55b5eb8e02e00ceecb689236c3fa2427c385"
+    },
+    "configs/robotwin/tasks_indep/click_alarmclock/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_alarmclock/preamble.txt",
+      "sha256": "4f78dab9bec991e5244d3ccf6613e29753bc045a95930f1b5235b3b1ad152ced"
+    },
+    "configs/robotwin/tasks_indep/click_alarmclock/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_alarmclock/task.yaml",
+      "sha256": "1467766add443935e20af26b1a58edc0b8597d6b389554b9789007e17e7f9ca7"
+    },
+    "configs/robotwin/tasks_indep/click_bell/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_bell/frozen_program.py",
+      "sha256": "ac434248032d524d49e83dfe65f878a539a1987ac4bacddcc18e5b949c2dbae7"
+    },
+    "configs/robotwin/tasks_indep/click_bell/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_bell/preamble.txt",
+      "sha256": "15f8c4132d124b66c63ce5c0058d9db2caa543dc264d3126d738e6ef553b9cd4"
+    },
+    "configs/robotwin/tasks_indep/click_bell/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/click_bell/task.yaml",
+      "sha256": "663b20be3c2966a1e61e5e73ab03f3e0ae491a3160f1e54c2d274ce41ac836a7"
+    },
+    "configs/robotwin/tasks_indep/dump_bin_bigbin/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/dump_bin_bigbin/frozen_program.py",
+      "sha256": "2e79f82e48234073725372d8962363dec5256ab67e907a927c0e2437c199372b"
+    },
+    "configs/robotwin/tasks_indep/dump_bin_bigbin/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/dump_bin_bigbin/preamble.txt",
+      "sha256": "1b685ab390e75daf8c296e5bf300a8d237e160fba5b525d36b8660f635a6216b"
+    },
+    "configs/robotwin/tasks_indep/dump_bin_bigbin/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/dump_bin_bigbin/task.yaml",
+      "sha256": "8454d9f83f23f54fd85fe1dfa49040e282da91dddb525fbd40c847ab4c093aa9"
+    },
+    "configs/robotwin/tasks_indep/grab_roller/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/grab_roller/frozen_program.py",
+      "sha256": "63b57b8685df25462f8ee757cb7782734a148822590f72f9a76eda716bd1645e"
+    },
+    "configs/robotwin/tasks_indep/grab_roller/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/grab_roller/preamble.txt",
+      "sha256": "748c0c6defc3e446a29f1721eedeb7ee8b141aff395d085c787ea1dc20116c28"
+    },
+    "configs/robotwin/tasks_indep/grab_roller/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/grab_roller/task.yaml",
+      "sha256": "67782ec67ff877ee6d339647bd8d0af73acf23bf995f8120205e9e3c86d48793"
+    },
+    "configs/robotwin/tasks_indep/handover_block/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_block/frozen_program.py",
+      "sha256": "aae170da1435fd6bd99bf650df5c7b7ff1db5c3608c1917a60a39f028df6ceca"
+    },
+    "configs/robotwin/tasks_indep/handover_block/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_block/preamble.txt",
+      "sha256": "a7698994b21d42cdb4882eea3012bef4e98cf16c830b017935e240c740df92ce"
+    },
+    "configs/robotwin/tasks_indep/handover_block/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_block/task.yaml",
+      "sha256": "f3ded4218dde06e9cc085bcb6532ede2c577689aa1ffca07a248ed74f9bc2ecd"
+    },
+    "configs/robotwin/tasks_indep/handover_mic/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_mic/frozen_program.py",
+      "sha256": "2b608d802924a3d721ee9928ea02e31873148d8ba063deebaecf306e74ac189a"
+    },
+    "configs/robotwin/tasks_indep/handover_mic/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_mic/preamble.txt",
+      "sha256": "18629912a0d0f40d575a3f09a8ff77e98c95e7e5fdd837abf34769a08e24381f"
+    },
+    "configs/robotwin/tasks_indep/handover_mic/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/handover_mic/task.yaml",
+      "sha256": "ba11d55b9c6fc9d3bcb0578312f87ebce7682901d8a96eb8fd64dc2bea74b25d"
+    },
+    "configs/robotwin/tasks_indep/hanging_mug/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/hanging_mug/frozen_program.py",
+      "sha256": "70616646681dba6533c3c0d31d1646389b8014bb5ab0b2a7cf825573d442e131"
+    },
+    "configs/robotwin/tasks_indep/hanging_mug/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/hanging_mug/preamble.txt",
+      "sha256": "20dd3435a9a5923868d5f14f8c11cde6d682ef725b4346fac877d625b5d2f3ae"
+    },
+    "configs/robotwin/tasks_indep/hanging_mug/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/hanging_mug/task.yaml",
+      "sha256": "aef460949cb4650a8f7ab80e66db25c01eee26da99bdb2c07e43b159ffb7178d"
+    },
+    "configs/robotwin/tasks_indep/lift_pot/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/lift_pot/frozen_program.py",
+      "sha256": "8a5ec59cd565bc3ae03bc38ec96ce53bdf19c21a0fb8696ed9ab2b86a60cdd8b"
+    },
+    "configs/robotwin/tasks_indep/lift_pot/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/lift_pot/preamble.txt",
+      "sha256": "26ec547b9afd1432d17861e9c1fc977141bcb83658124c62c6de330b565ca741"
+    },
+    "configs/robotwin/tasks_indep/lift_pot/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/lift_pot/task.yaml",
+      "sha256": "16f3ba5117a2ed10d3fce7e238389b6abfc8a2ae4b77a61506dc9462751818e0"
+    },
+    "configs/robotwin/tasks_indep/move_can_pot/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_can_pot/frozen_program.py",
+      "sha256": "595c39d2c3cdf9f60c5984da422c4cdadb7806e503ca68942de322922885ea89"
+    },
+    "configs/robotwin/tasks_indep/move_can_pot/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_can_pot/preamble.txt",
+      "sha256": "46ffb8f227bc500dd240714e5d7d13c49b22476110f605976cb43053f7b44f67"
+    },
+    "configs/robotwin/tasks_indep/move_can_pot/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_can_pot/task.yaml",
+      "sha256": "8f0d3c5979ee9099eed67cb8c100d228e031019d95ee89e94eeb5e7d116f34ed"
+    },
+    "configs/robotwin/tasks_indep/move_pillbottle_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_pillbottle_pad/frozen_program.py",
+      "sha256": "a5b31fd9239db71ed85d3c9dbd01b161959721ef59de6e5fa10d9fdc7265d1fc"
+    },
+    "configs/robotwin/tasks_indep/move_pillbottle_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_pillbottle_pad/preamble.txt",
+      "sha256": "44fa22c83cf2f1cbe26e1d0543372f18eefdd9a0d2c1d144f0cf8a36dc16048e"
+    },
+    "configs/robotwin/tasks_indep/move_pillbottle_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_pillbottle_pad/task.yaml",
+      "sha256": "f36c9be699785b1899ef3027f33ceacaf3d9ac2af685905ccb38d973c7dbc33d"
+    },
+    "configs/robotwin/tasks_indep/move_playingcard_away/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_playingcard_away/frozen_program.py",
+      "sha256": "1b412c2e1715a7533da7fdd15b48f7eb642a1cae2ac96d1bef7d7f025a2d5d09"
+    },
+    "configs/robotwin/tasks_indep/move_playingcard_away/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_playingcard_away/preamble.txt",
+      "sha256": "33df833c6c35c19e6f3d2ced3fdb65eeb11eb636ba0366e083cfd319ab115b20"
+    },
+    "configs/robotwin/tasks_indep/move_playingcard_away/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_playingcard_away/task.yaml",
+      "sha256": "85409e3e9696ba60e1312b1a0977a75032c6fc7bfbc906bc0d8e8e65b396ad0f"
+    },
+    "configs/robotwin/tasks_indep/move_stapler_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_stapler_pad/frozen_program.py",
+      "sha256": "8a60f7c8aa13a6af377f8cb15c2d19af82b9f48090f17c853d3dba6415d90c48"
+    },
+    "configs/robotwin/tasks_indep/move_stapler_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_stapler_pad/preamble.txt",
+      "sha256": "05337979b280fd7bac59452596c3e7a08a65a8c077b76df3b1263e308af080b6"
+    },
+    "configs/robotwin/tasks_indep/move_stapler_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/move_stapler_pad/task.yaml",
+      "sha256": "40cc56f087d9ca1157fc5436d1da9b65737e5ae3041bc78c16eb61384ac33f41"
+    },
+    "configs/robotwin/tasks_indep/open_laptop/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_laptop/frozen_program.py",
+      "sha256": "6e4d6ca8d7e3c50c23604ce624ff61a428922569c1250764451827c295d5d82e"
+    },
+    "configs/robotwin/tasks_indep/open_laptop/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_laptop/preamble.txt",
+      "sha256": "26ba9d284c05e81c3758a8079c9b9f1a575f49f8da232950b42b3063f079982b"
+    },
+    "configs/robotwin/tasks_indep/open_laptop/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_laptop/task.yaml",
+      "sha256": "6867be2e123db584768edc995a309e3f31bdeb6d447775123e70d7254332a248"
+    },
+    "configs/robotwin/tasks_indep/open_microwave/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_microwave/frozen_program.py",
+      "sha256": "50a62fe3520a5636d6bafabd6e3575b94e0b7758b5bc99fdd8582c8e1d3a675b"
+    },
+    "configs/robotwin/tasks_indep/open_microwave/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_microwave/preamble.txt",
+      "sha256": "6649b962e737e33ce1a196ec5a928f30094f6cac2fe38eda2610734087b5f673"
+    },
+    "configs/robotwin/tasks_indep/open_microwave/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/open_microwave/task.yaml",
+      "sha256": "d1bfb539bacb9395fd0e36f7e90ccd9484026be63675d5efe1f857562669cc50"
+    },
+    "configs/robotwin/tasks_indep/pick_diverse_bottles/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_diverse_bottles/frozen_program.py",
+      "sha256": "06db3f638539f7cb8974c6e461ca84a14628ac1eff9f2938d12067316e4db1b8"
+    },
+    "configs/robotwin/tasks_indep/pick_diverse_bottles/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_diverse_bottles/preamble.txt",
+      "sha256": "562a97dbde64249ac154998b147f824a3fb333f3008197d2d46a2b9fcdf1b971"
+    },
+    "configs/robotwin/tasks_indep/pick_diverse_bottles/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_diverse_bottles/task.yaml",
+      "sha256": "3efa21cd88407c055ee1b66e84e163dc3080075acadb437102f8339c0a574c32"
+    },
+    "configs/robotwin/tasks_indep/pick_dual_bottles/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_dual_bottles/frozen_program.py",
+      "sha256": "389de7717f76f4ae4e052eccdbcbdf177633bc874dc3a647070e9babace75311"
+    },
+    "configs/robotwin/tasks_indep/pick_dual_bottles/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_dual_bottles/preamble.txt",
+      "sha256": "5e43a18f89556358714493b8d875ea71c32f39cce5139826c147131bd35e4cad"
+    },
+    "configs/robotwin/tasks_indep/pick_dual_bottles/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/pick_dual_bottles/task.yaml",
+      "sha256": "0b3c59d9de98a76b9180fe9d1a2392203f27851c77df79b521bd4e603cfa6f51"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_left/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_left/frozen_program.py",
+      "sha256": "69456306a6b03529bb5e00c84b64102ab0d7bdfaba15a3c4c5a109a3cebf7824"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_left/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_left/preamble.txt",
+      "sha256": "e8fd0073bd3fef039ec67e3f28aec61bc5a510aab3111d69de0f48f4ae3a798f"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_left/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_left/task.yaml",
+      "sha256": "6704705d0402182195c30054231c0d6fb19b18eb845d4b335763d46dee8ec2b3"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_right/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_right/frozen_program.py",
+      "sha256": "ef517f477c898dc139a2c4ec8731e50100614f4b73e12874be272d27b2591ea8"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_right/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_right/preamble.txt",
+      "sha256": "d5ac8e8db8d13e589d69a7a3c7a38a1d87fd560c91bb6cfe3d60c6cb6ef30aed"
+    },
+    "configs/robotwin/tasks_indep/place_a2b_right/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_a2b_right/task.yaml",
+      "sha256": "12a90251789f1ba26a206b04c60d4d3a3f59c813277d9ff6236e46e871b24bdc"
+    },
+    "configs/robotwin/tasks_indep/place_bread_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_basket/frozen_program.py",
+      "sha256": "8b24937d7ac3392b6624cf52101378935aedfce7d5266fc3c3f2d4f4676ff666"
+    },
+    "configs/robotwin/tasks_indep/place_bread_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_basket/preamble.txt",
+      "sha256": "46b6a24e4d563a7dfed5bce6eab4e83205a743e4f22ee91be8fcfdd37fbe6df5"
+    },
+    "configs/robotwin/tasks_indep/place_bread_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_basket/task.yaml",
+      "sha256": "02088926063ad237dc9dcafd0f346fd86508954b902b04a0e5e3b031cf388ece"
+    },
+    "configs/robotwin/tasks_indep/place_bread_skillet/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_skillet/frozen_program.py",
+      "sha256": "f32f175e293bb92c7eadb2f7f5c2d8f1703409c32f932c78eeeb80427ff20400"
+    },
+    "configs/robotwin/tasks_indep/place_bread_skillet/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_skillet/preamble.txt",
+      "sha256": "4e09c9233115253571741a69c6650ab6bfba596ad67802dc0c27c99edc4a3058"
+    },
+    "configs/robotwin/tasks_indep/place_bread_skillet/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_bread_skillet/task.yaml",
+      "sha256": "12d9ad62cb42a163b7f78d27714121b0bffe580a46b7ffa1ea3812071630f0ee"
+    },
+    "configs/robotwin/tasks_indep/place_burger_fries/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_burger_fries/frozen_program.py",
+      "sha256": "dd7af8a2fc3e87442713280534eff81b7ec143dc28f5c0fcc275478d99a8a64f"
+    },
+    "configs/robotwin/tasks_indep/place_burger_fries/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_burger_fries/preamble.txt",
+      "sha256": "af5d4a6a0455053b480aebb17a0a79d6ed72b1b873f27c38bb6ed42da5ac6d3e"
+    },
+    "configs/robotwin/tasks_indep/place_burger_fries/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_burger_fries/task.yaml",
+      "sha256": "c5653436b0c7395d24bc830980142d9ee6832cb313d04a486a31e3a7b130687b"
+    },
+    "configs/robotwin/tasks_indep/place_can_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_can_basket/frozen_program.py",
+      "sha256": "8bfc05fd776bc4f7d93d558c39c0a76a413ae2466b3d3f3eae06fa1e6c414196"
+    },
+    "configs/robotwin/tasks_indep/place_can_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_can_basket/preamble.txt",
+      "sha256": "45f06f1a8d1d340e5f26513f235ddfa315dcfa95a86d9465998647ce1a1d3555"
+    },
+    "configs/robotwin/tasks_indep/place_can_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_can_basket/task.yaml",
+      "sha256": "e245f9a43e24f68929602dfa9352ac8cf8aa40efdb1abd7f8da425b81bbf786f"
+    },
+    "configs/robotwin/tasks_indep/place_cans_plasticbox/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_cans_plasticbox/frozen_program.py",
+      "sha256": "d05da75d2082dee51fa980520a7d41d2237d8bf3d05fa82619dfd484b03d3653"
+    },
+    "configs/robotwin/tasks_indep/place_cans_plasticbox/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_cans_plasticbox/preamble.txt",
+      "sha256": "44c62f7bda7225ff66bbd0f7351e3505b42a565173bcb9dde019b6de3711c7f3"
+    },
+    "configs/robotwin/tasks_indep/place_cans_plasticbox/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_cans_plasticbox/task.yaml",
+      "sha256": "4f7469ac73dbfc37fd2a8a619a7bbb2663e65fb5792d1198476995dfa93d6b84"
+    },
+    "configs/robotwin/tasks_indep/place_container_plate/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_container_plate/frozen_program.py",
+      "sha256": "6f52fb3018b86d7af4036d03ed6c5c4cec04fc70fc604258b44fdf787b47ebee"
+    },
+    "configs/robotwin/tasks_indep/place_container_plate/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_container_plate/preamble.txt",
+      "sha256": "d5d5708b21f4392f8ed1bf3b555db1a0ccaf7f8731f1acf773eb0c5afda29c76"
+    },
+    "configs/robotwin/tasks_indep/place_container_plate/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_container_plate/task.yaml",
+      "sha256": "4f94440fbca4f7b12747bae6ef177de74058cb9f67a7aebc85d069c69d816964"
+    },
+    "configs/robotwin/tasks_indep/place_dual_shoes/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_dual_shoes/frozen_program.py",
+      "sha256": "deb80f23af7f633a68b2d41507aeef0f754f2b5fe9d41388830273fdbeb50608"
+    },
+    "configs/robotwin/tasks_indep/place_dual_shoes/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_dual_shoes/preamble.txt",
+      "sha256": "108cd1fbfff7e45eb25c6bb74aa029bbd1b2ec802d33243b01fdc03cc98be623"
+    },
+    "configs/robotwin/tasks_indep/place_dual_shoes/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_dual_shoes/task.yaml",
+      "sha256": "3aad1f00f5678d408754d590e6e30e65a401db02ade1bb1e019defbc68f7d322"
+    },
+    "configs/robotwin/tasks_indep/place_empty_cup/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_empty_cup/frozen_program.py",
+      "sha256": "749555e991a05d5233b6917d22db81259ed3afa1f9de3e28f9c7697437cc3ca0"
+    },
+    "configs/robotwin/tasks_indep/place_empty_cup/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_empty_cup/preamble.txt",
+      "sha256": "a433fb84c1a4022b4ce733208b108575cfd0c7e75b6285a7a3159739f86bf494"
+    },
+    "configs/robotwin/tasks_indep/place_empty_cup/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_empty_cup/task.yaml",
+      "sha256": "59cc9b513cac4161e16fe457f7a95915b3c41f2ddb7a51b6567616c643a86296"
+    },
+    "configs/robotwin/tasks_indep/place_fan/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_fan/frozen_program.py",
+      "sha256": "52d0c04338f2b41c7f368713001540ea63cd6dd5f841836050f41a998b36bf62"
+    },
+    "configs/robotwin/tasks_indep/place_fan/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_fan/preamble.txt",
+      "sha256": "0fb8b0219f9b6fee043ad935dadbab01eb2f44b875fc93a042f58412fbd7a77a"
+    },
+    "configs/robotwin/tasks_indep/place_fan/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_fan/task.yaml",
+      "sha256": "5c15964a6a6ad0b1c3afa4dd07412eceb859696ac275dac36ce562474e26c1ab"
+    },
+    "configs/robotwin/tasks_indep/place_mouse_pad/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_mouse_pad/frozen_program.py",
+      "sha256": "02a3108f2a1b6f0a77136e76042a72402514dbf8f4270027d55a2ad69010a288"
+    },
+    "configs/robotwin/tasks_indep/place_mouse_pad/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_mouse_pad/preamble.txt",
+      "sha256": "07f2c2fb534029fe9c7f1e864bb2ba6484822938548300a6c30e35487da5f189"
+    },
+    "configs/robotwin/tasks_indep/place_mouse_pad/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_mouse_pad/task.yaml",
+      "sha256": "bd0e0e176e4984a4f8d29b6dd65fe9002287cccef06f151021df0b595f68b035"
+    },
+    "configs/robotwin/tasks_indep/place_object_basket/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_basket/frozen_program.py",
+      "sha256": "cfa62f9460cd27f5a39756d11285d818898a0e687f9cbafb1bea6af90d302f46"
+    },
+    "configs/robotwin/tasks_indep/place_object_basket/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_basket/preamble.txt",
+      "sha256": "9e5eedde725d73a35571e706ca228e00dcaaf2931a22ff8253a72c40316a746f"
+    },
+    "configs/robotwin/tasks_indep/place_object_basket/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_basket/task.yaml",
+      "sha256": "f503f341202821c2e272c5b809e665166c559cde7fc695de5f144fb484533847"
+    },
+    "configs/robotwin/tasks_indep/place_object_scale/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_scale/frozen_program.py",
+      "sha256": "0a840d9b51cbe63ef376762f9bd88669f458a7b49c76a3a9c36650c1b881a0a1"
+    },
+    "configs/robotwin/tasks_indep/place_object_scale/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_scale/preamble.txt",
+      "sha256": "8b9e44158f5958c00928a12574a17d4225d4b97e5d336932594a10b5cf7a3982"
+    },
+    "configs/robotwin/tasks_indep/place_object_scale/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_scale/task.yaml",
+      "sha256": "1823833a0c27a772a0e13a66da1fbeefad04ae1752717d3c15b1927565d95641"
+    },
+    "configs/robotwin/tasks_indep/place_object_stand/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_stand/frozen_program.py",
+      "sha256": "f3a449318b1cdc91cbd82c97f970726b1421e6156966a78a1a713b857c280093"
+    },
+    "configs/robotwin/tasks_indep/place_object_stand/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_stand/preamble.txt",
+      "sha256": "ca95eb39cb32f79f8725f5a5ea038fcc30a65f6a9b499dcd619419fea3a35211"
+    },
+    "configs/robotwin/tasks_indep/place_object_stand/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_object_stand/task.yaml",
+      "sha256": "4f50886456144ec51acdeac810a7c4faf7090e92b08c0d2c8611a06c95b1655a"
+    },
+    "configs/robotwin/tasks_indep/place_phone_stand/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_phone_stand/frozen_program.py",
+      "sha256": "d0b12c66e29c243841a7a890e53cc572c976b13e61788abbb9afc8d6ed94f332"
+    },
+    "configs/robotwin/tasks_indep/place_phone_stand/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_phone_stand/preamble.txt",
+      "sha256": "dc0678d6f61fe7e9426c288fe4e8c7947d738f5be714c8bdccf8e2f5a8fb4507"
+    },
+    "configs/robotwin/tasks_indep/place_phone_stand/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_phone_stand/task.yaml",
+      "sha256": "25051fdca45a83f7b452e2a2dfab5d47d6994917bb12939fdc1d4fb13867ebc8"
+    },
+    "configs/robotwin/tasks_indep/place_shoe/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_shoe/frozen_program.py",
+      "sha256": "ad98a45d45f8216c1536c8633bb7ec36dc95eb3ce34cf7388b91b491b48134f6"
+    },
+    "configs/robotwin/tasks_indep/place_shoe/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_shoe/preamble.txt",
+      "sha256": "c2aa835170bb3b37b5e727d17534978bf7bf06fc45224d7a2587d4623a5ef489"
+    },
+    "configs/robotwin/tasks_indep/place_shoe/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/place_shoe/task.yaml",
+      "sha256": "5b429f04d90c8ae064786265c50411d2f17eb4d58b7499e7a63bc6fa7b43e818"
+    },
+    "configs/robotwin/tasks_indep/press_stapler/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/press_stapler/frozen_program.py",
+      "sha256": "74db275bbb98e97485fc6204f9f78874274ebdfb2627b76712b272bab53afb92"
+    },
+    "configs/robotwin/tasks_indep/press_stapler/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/press_stapler/preamble.txt",
+      "sha256": "a8b266faa07f305b44aa1e9ecdf758724281c0927275d022407fde9fd71e20cb"
+    },
+    "configs/robotwin/tasks_indep/press_stapler/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/press_stapler/task.yaml",
+      "sha256": "1db0e7b719a84991251b03811154c35f52ac0e765e4679f1e529af5b71a38961"
+    },
+    "configs/robotwin/tasks_indep/put_bottles_dustbin/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_bottles_dustbin/frozen_program.py",
+      "sha256": "8adbfceeb3b961763cac34e66d628d3f90eef97e6a80343811f8443995ea9cd4"
+    },
+    "configs/robotwin/tasks_indep/put_bottles_dustbin/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_bottles_dustbin/preamble.txt",
+      "sha256": "78199b6bb4c5266739b30b37536a59919d77719da63e469cc8a7baacb7b62df7"
+    },
+    "configs/robotwin/tasks_indep/put_bottles_dustbin/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_bottles_dustbin/task.yaml",
+      "sha256": "de036f613adb93a0f99c8bb536b25daf2a121c88e74a49747bd294e8ec107dcf"
+    },
+    "configs/robotwin/tasks_indep/put_object_cabinet/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_object_cabinet/frozen_program.py",
+      "sha256": "8b4f5691e0fdc2796f1657df486fbbe3b8f90a499e39321ee20a3eb2c4daecec"
+    },
+    "configs/robotwin/tasks_indep/put_object_cabinet/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_object_cabinet/preamble.txt",
+      "sha256": "34a0449ee977ef54dcb1b249cd634770df4de2d076b7132c9095a45e40523787"
+    },
+    "configs/robotwin/tasks_indep/put_object_cabinet/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/put_object_cabinet/task.yaml",
+      "sha256": "46766bb0305216a2af5195eff593b794f0e299689f56d072570bcd2bb8d3c978"
+    },
+    "configs/robotwin/tasks_indep/rotate_qrcode/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/rotate_qrcode/frozen_program.py",
+      "sha256": "2808979b4ca05c6aa7c0a146d853376f213a8fc963127296452acb65f67fbf36"
+    },
+    "configs/robotwin/tasks_indep/rotate_qrcode/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/rotate_qrcode/preamble.txt",
+      "sha256": "92cf0bbe61c13702db5d470707fc5d3a1561066750c7956d477449237f8feb32"
+    },
+    "configs/robotwin/tasks_indep/rotate_qrcode/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/rotate_qrcode/task.yaml",
+      "sha256": "7aaf09b109ef4ed7419e1b3074c48b0368bf975e670b245c9d3e77f5a84b9228"
+    },
+    "configs/robotwin/tasks_indep/scan_object/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/scan_object/frozen_program.py",
+      "sha256": "71b05b0ff34ae7a155206072e1689c9c5796688c50f465d6849f427c42783fd2"
+    },
+    "configs/robotwin/tasks_indep/scan_object/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/scan_object/preamble.txt",
+      "sha256": "215d9cdab204a1b8f05b203def2d1afdbbff6fab68d20dd6d37deee5ba915857"
+    },
+    "configs/robotwin/tasks_indep/scan_object/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/scan_object/task.yaml",
+      "sha256": "3416684bc58501491a670ed3e4563259c2b37479b719e23cd3de443a474209c1"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle/frozen_program.py",
+      "sha256": "2770a0b96dfb90b33a6e4ea3a87e2e8ff8f09dedc691b4376272e7854947f4b6"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle/preamble.txt",
+      "sha256": "7ef9540e1c3294394e40cdc44a28a83f72eabac4a82d0fe8dfb50d9bcf2100fd"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle/task.yaml",
+      "sha256": "00fab4c6294a661a641de0a4c4ae38514767e9374d43333a115ad368b9ed96e8"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle_horizontally/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle_horizontally/frozen_program.py",
+      "sha256": "217711b717d1e4723a7d2137a48f50d69feb56e9c914f02130863b01a3a0efa4"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle_horizontally/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle_horizontally/preamble.txt",
+      "sha256": "dbab49fe5227fcc7e3b2833b65b47f24da5d7d2a882df7d7deec571320bda328"
+    },
+    "configs/robotwin/tasks_indep/shake_bottle_horizontally/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/shake_bottle_horizontally/task.yaml",
+      "sha256": "4a10cd34b60deeded5a2569f9c9ef71f514d4b9d93549a6504bea5495d53730b"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_three/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_three/frozen_program.py",
+      "sha256": "c02b7e080f358476a270c892e0d8f14a14f93d17179780cd226db1585bcd8415"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_three/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_three/preamble.txt",
+      "sha256": "cf34c5d0d1fdc928324eb5c49c004f8bf5fe0b7bcf961c83f3589156d8039e9b"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_three/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_three/task.yaml",
+      "sha256": "1a8e787dec6f7033ef328700fa5d6c32cf75c83fa2778d03d4d1f456841e2afe"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_two/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_two/frozen_program.py",
+      "sha256": "564b23f371318d16e6cb6d318792bae55c9a44f696ebb88e65bd674173aa6f01"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_two/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_two/preamble.txt",
+      "sha256": "753e77a058decb7534fd57acb67bea6d333621c36deea86c0dfebf3541ec0b26"
+    },
+    "configs/robotwin/tasks_indep/stack_blocks_two/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_blocks_two/task.yaml",
+      "sha256": "8ef5b35cb3054ab50406235f83b7911d907c3ade39745810517a98208ec3db19"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_three/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_three/frozen_program.py",
+      "sha256": "a7837c3f90d95e705c720f9c47adf8ba48f9f91f3ac66944536a2ce988d1e276"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_three/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_three/preamble.txt",
+      "sha256": "f4694dc5a3ddf3e6fbaf996ba5e047e81d83883aa2f0e224be568498489de834"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_three/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_three/task.yaml",
+      "sha256": "112e38a2ab58f4f97b52ff3b693c0589d13e866eecd766aedb61c7f8cc7940e1"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_two/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_two/frozen_program.py",
+      "sha256": "339969c0e83e23560855a2c0b937e45a98411fdc67167a68e77ea18f0f78cb6e"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_two/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_two/preamble.txt",
+      "sha256": "c27d194790dd88c2675f70e7b8a883bc519c74c7474bb9f790e8bc1c3eeafa98"
+    },
+    "configs/robotwin/tasks_indep/stack_bowls_two/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stack_bowls_two/task.yaml",
+      "sha256": "80e476291119a9b63dac6be3b07e8cd9350907e03c74872de8be3aa3e09b933f"
+    },
+    "configs/robotwin/tasks_indep/stamp_seal/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stamp_seal/frozen_program.py",
+      "sha256": "583cde90d2b749a04b911e9cd9a829cffcd976d3f0c56b67e810f32d7b127546"
+    },
+    "configs/robotwin/tasks_indep/stamp_seal/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stamp_seal/preamble.txt",
+      "sha256": "fcd9074e43a2074a0dfc17023322bbf90b7207e84093ebcda9f90a056b2c16c4"
+    },
+    "configs/robotwin/tasks_indep/stamp_seal/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/stamp_seal/task.yaml",
+      "sha256": "bbb66ce29df042566f4c5024a5f4c936c911d41d934b855fc6bfa29446970071"
+    },
+    "configs/robotwin/tasks_indep/turn_switch/frozen_program.py": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/turn_switch/frozen_program.py",
+      "sha256": "2764b37c4c367747e5ef2f0530931ad5c5bbf567c2c90f01a7da9f139b57b69a"
+    },
+    "configs/robotwin/tasks_indep/turn_switch/preamble.txt": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/turn_switch/preamble.txt",
+      "sha256": "2b9f903cfc7e900b08d50ceffc96c6f6685585af620ac6ddc2938d617d1e062c"
+    },
+    "configs/robotwin/tasks_indep/turn_switch/task.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/tasks_indep/turn_switch/task.yaml",
+      "sha256": "1a721d505144bc44877b7342bd4f8a95bd6d7b62baef856446b1767594f9930e"
+    },
+    "configs/train.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/train.yaml",
+      "sha256": "954dcab104f8307ed4129c7f46d1dce2ff71e690ed05d7bf2c30403636bd827b"
+    },
+    "deploy/common/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/__init__.py",
+      "sha256": "1e740f340fcd886baa6e82ce10c1dfbd1df39b952bb108e5c3494592cd7afbfc"
+    },
+    "deploy/common/contract.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/contract.py",
+      "sha256": "b0727e46fb3e393e89316d847aaba9ebeeee958fe86100b2668c3b13b4e7919e"
+    },
+    "deploy/common/fast_joint_infer.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/fast_joint_infer.py",
+      "sha256": "dac856d43ef285919a487959ab0af0d2a61b74aabbe1946e18b93b6931960087"
+    },
+    "deploy/common/obs_codec.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/obs_codec.py",
+      "sha256": "52e3d99a3817998ebd970bafbad67919fb48a063ae17df618e0b9ba3f1dffc4a"
+    },
+    "deploy/common/policy_runtime.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/policy_runtime.py",
+      "sha256": "462c357db43bac925a4dc0030c9bec9944b1e739cf068c5ffb2588d4fcb76f8f"
+    },
+    "deploy/common/yam_eef64.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/common/yam_eef64.py",
+      "sha256": "e3e14f8f37b50beca6235558eb17dcccd3b7259b48842ebc508c71c527330679"
+    },
+    "deploy/deploy_client_example.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/deploy_client_example.py",
+      "sha256": "dce1a436ddbb66eaa629d944e760941402543db5e0f0668c502e9b1383d63d4d"
+    },
+    "deploy/deploy_server.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/deploy_server.py",
+      "sha256": "1a52d4a550e16ce675c64e05ca372c901a5aa1890d1ce899241a7308a8882018"
+    },
+    "deploy/launch_server.sh": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/launch_server.sh",
+      "sha256": "d2c9bc81d5ed9a4b69cdb7ccc855d4c935e1ea1ce58efc0452eea494b7e793f4"
+    },
+    "deploy/linkqual_client.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/linkqual_client.py",
+      "sha256": "2dd3ac0d38fc38e15ef9924fb2bbbb3d92848b2f583bc19e5ffc1458f3bba1e4"
+    },
+    "deploy/linkqual_server.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/linkqual_server.py",
+      "sha256": "60a4975c3f4198bfb95816f57797e88c34df42e98491250cc6801a04fb831542"
+    },
+    "deploy/remote/server.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/remote/server.py",
+      "sha256": "7c24712278e7cbd2850d33c1648e992b8e8e58b9e94e13d4ff50226b585da99c"
+    },
+    "deploy/robot/agenticwam_client.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/robot/agenticwam_client.py",
+      "sha256": "987761c6e5e1dc20b40839d0de716efc3e2b7d71f1e9bee0d7e53f17f043541f"
+    },
+    "deploy/robot/measure_link.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/robot/measure_link.py",
+      "sha256": "522d4b0a3d2bbb1f23d62989fd7f46e8b29925381a9a118417d94882088fb8db"
+    },
+    "deploy/robot/obs_pipeline.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/robot/obs_pipeline.py",
+      "sha256": "2df7bf52963416a6c64ebc2d2528cef15e6a0dc820cd36d309f3bd415ae3bdc5"
+    },
+    "deploy/robot/run_agenticwam_eval.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/robot/run_agenticwam_eval.py",
+      "sha256": "1aec5ab3475ebacdc6836d947433d3417f5010ac3c2ece83585f5147ec145bd1"
+    },
+    "deploy/tests/profile_cudagraph_test.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/tests/profile_cudagraph_test.py",
+      "sha256": "b1035cf32ff012960538c27a0ae26865922dcf5c6c0b7d4d80bc2826f118c1d3"
+    },
+    "deploy/tests/profile_joint_infer.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/tests/profile_joint_infer.py",
+      "sha256": "57487ad3245332604f771b290398722aff805752dc1de49efaf35eb9ffc83a03"
+    },
+    "deploy/tests/validate_fast_joint.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/tests/validate_fast_joint.py",
+      "sha256": "4ccf04d99b167590c76cc63d34dd5e44306026c5a460d9ea4c846a46a45a584e"
+    },
+    "deploy/tests/validate_rtc.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/tests/validate_rtc.py",
+      "sha256": "79d060402edc63d4c8da214777a9c6bbd28e35dc0871192ce370566423a77164"
+    },
+    "deploy/tests/validate_yam_eef64.py": {
+      "source": "/home/yilianli/project/agentic-wam/deploy/tests/validate_yam_eef64.py",
+      "sha256": "e6ddc80d1f1e637e7a6b6349448264f9dbd4b6999f2a3e16c8d269b4b41dc9b7"
+    },
+    "pyproject.toml": {
+      "source": "/home/yilianli/project/agentic-wam/pyproject.toml",
+      "sha256": "2e94ec59c7ec7469f103eb6604a5eadbaf3fd551290390ba2d1b8d4a8ff7f994"
+    },
+    "robotwin/dataprep/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/__init__.py",
+      "sha256": "75c20dd24b9567f70d1df9cdcfc048671e3453b08aaafb356b363c5fc9ee4496"
+    },
+    "robotwin/dataprep/data_base.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/data_base.yaml",
+      "sha256": "93e24c698fefc3474cb4d3bfa1005ca40c0ef2520034454cf2700be49eddfdb9"
+    },
+    "robotwin/dataprep/data_config.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/data_config.py",
+      "sha256": "eef9d28400160e02755299aec731f744609c14b30878c6ab04d0d36e2b5ee874"
+    },
+    "robotwin/dataprep/prepare.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/prepare.py",
+      "sha256": "ab6eed5774c81712ca98f8f2f86ecef445ab821995fe82adec6ed37c22335345"
+    },
+    "robotwin/dataprep/slicing.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/slicing.py",
+      "sha256": "2c5ec26815cb0daa61c9150cb85f68ecfef4fc4d39d2dac689fddd05f45ba741"
+    },
+    "robotwin/dataprep/smoke.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/smoke.py",
+      "sha256": "d0afc1c46ee085354ed2ba979275902542f586b10e6b91eb829c7a10ba660887"
+    },
+    "robotwin/dataprep/task_template.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/task_template.yaml",
+      "sha256": "5ce40007ea9e30f0e614cab971126c8473141f125aac9a9d3a257e549bdcee25"
+    },
+    "robotwin/dataprep/tests/test_slicing.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/tests/test_slicing.py",
+      "sha256": "e21623e77e4307144929baf57f405f79306e219aae3f6b8223c48de0a1b15b31"
+    },
+    "robotwin/dataprep/text_cache.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/dataprep/text_cache.py",
+      "sha256": "72955b3eb5321b38883334044bff03a808fc83fee81a769a82fe7d3fc5c756ab"
+    },
+    "robotwin/deploy/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/deploy/__init__.py",
+      "sha256": "206c2564ed6e4dc0693d280a3e19c05295ca65844a6d0bb3f6c4016b7c2a8f4b"
+    },
+    "robotwin/deploy/deploy_policy.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/deploy/deploy_policy.py",
+      "sha256": "758f9631689c4876329d013a84ca765054affa286817c0c22db2e8721bccff2f"
+    },
+    "robotwin/deploy/deploy_policy.yml": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/deploy/deploy_policy.yml",
+      "sha256": "a1dd9fe61e01a2233fd0abf4790bec0b0de0f90cbfc33aa65399ef1ee0e20f76"
+    },
+    "robotwin/deploy/deploy_policy_eef64.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/deploy/deploy_policy_eef64.py",
+      "sha256": "b865b514ab387c12d9ea8f90d2de4e302c995c6f199c62a3386444f9b7642da8"
+    },
+    "robotwin/eval/benchmark.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/eval/benchmark.py",
+      "sha256": "7cc11fe3213415f198a3f292fbdad9254b171cfa976c4d5222beb03715e6c879"
+    },
+    "robotwin/eval/report.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/eval/report.py",
+      "sha256": "de5ad89358906f39d2a1580731649c446eefd90e9aa4c26b241f412f6fb73073"
+    },
+    "robotwin/eval/robotwin_entry.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/eval/robotwin_entry.py",
+      "sha256": "fc4e2a941f6b0d62bf2ef1df2a442cac2c1c2937cd6411c1af050ec0eaf0ee78"
+    },
+    "robotwin/eval/run_task.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/eval/run_task.py",
+      "sha256": "a213d851bb99d5baf839e7bebb7ed5b953abb3da2b742439e69dec92d6e35971"
+    },
+    "robotwin/hybrid_eval/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/__init__.py",
+      "sha256": "528fcdd1b4ca59fccb9cead1726818a3963c035aad406c4bb25a41aacd007dbf"
+    },
+    "robotwin/hybrid_eval/apply_scene_seeds.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/apply_scene_seeds.py",
+      "sha256": "6b77ef72125b2a86efcdda63cc0667140021716bcc8783639d77af1c554f2a82"
+    },
+    "robotwin/hybrid_eval/arbiter.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/arbiter.py",
+      "sha256": "7bd1565467770f5af962667f234c1b22f06ef5df1b6468e9b70261570b682162"
+    },
+    "robotwin/hybrid_eval/assemble.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/assemble.py",
+      "sha256": "4455716a202505d0f5c264c15e55668de9eb3045c99b576c50b2c21de7232d1c"
+    },
+    "robotwin/hybrid_eval/config.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/config.py",
+      "sha256": "8e039cfb2a363362ebc8287087847c259999bcd98ff3a778ef00138dcab3e115"
+    },
+    "robotwin/hybrid_eval/import_tasks.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/import_tasks.py",
+      "sha256": "9d24e54d40c2cc95d5950523f5574b54285681255e70d1647ff61d9458087bca"
+    },
+    "robotwin/hybrid_eval/launch.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/launch.py",
+      "sha256": "cbaa6cd847d34dd4ddec0666f9abde2a338644377e42e44de0c411cdc09cf0ef"
+    },
+    "robotwin/hybrid_eval/rollout_viewer.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/rollout_viewer.py",
+      "sha256": "886e177d0914bb8f89539dd50e1a335f0fe9e9c1f0718eb19b9b761f68fd5818"
+    },
+    "robotwin/hybrid_eval/vision.py": {
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/vision.py",
+      "sha256": "755a097f41eb20db4752ebc367548f8d1111cb4a31862d851e12e1d1c1dae464"
+    },
+    "scripts/accelerate_configs/accelerate_zero1_ds.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/accelerate_configs/accelerate_zero1_ds.yaml",
+      "sha256": "5b9e24f38c199fdff6bbd17981d86e2624f855f707660094c99f711efc8e0833"
+    },
+    "scripts/accelerate_configs/accelerate_zero2_ds.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/accelerate_configs/accelerate_zero2_ds.yaml",
+      "sha256": "3b838fbf44cd279613797e9ac3265f306806391963be593cb47787d38240a2e1"
+    },
+    "scripts/ds_configs/ds_zero1_config.json": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/ds_configs/ds_zero1_config.json",
+      "sha256": "2fbc0ef165a3f1a1c26c57790a0e5e7938ac365a3b84f5e2b2bac52b10b305b1"
+    },
+    "scripts/ds_configs/ds_zero2_config.json": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/ds_configs/ds_zero2_config.json",
+      "sha256": "ef9e8507680272d68cc2eaba83110bdd0aafa2fe3d4fbad3b469e2b288e00e4e"
+    },
+    "scripts/eval_robotwin_release.py": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/eval_robotwin_release.py",
+      "sha256": "82348af74cfb1f0dbd5c67eb000108cb31964498d70ab4f4bbd2c6e63766d90f"
+    },
+    "scripts/launch_train.py": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/launch_train.py",
+      "sha256": "9a74c662a7513f0cd9cfa3c43c0be939a467648b3c75d92755290f9de327b248"
+    },
+    "scripts/posttrain_annotation_robotwin.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/posttrain_annotation_robotwin.sh",
+      "sha256": "dfaf2ae2796318ddffb612c4f48584a23b6a03e9c0862c48aff810014ffa83db"
+    },
+    "scripts/posttrain_annotation_sharpa.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/posttrain_annotation_sharpa.sh",
+      "sha256": "587e755d6d81c199e11214a865c5c95f63cf8612b567b361c64a0630159eb524"
+    },
+    "scripts/posttrain_annotation_yam.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/posttrain_annotation_yam.sh",
+      "sha256": "72e18f97ef5a2b38717082f296583955064e444a33f050195eebc801dd3303d9"
+    },
+    "scripts/precompute_cosmos_text_embeds.py": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/precompute_cosmos_text_embeds.py",
+      "sha256": "d9c098f466952e7b27ea263d0a5399a098077f82df3ccee30e2089697c6cae0d"
+    },
+    "scripts/preflight_sft.py": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/preflight_sft.py",
+      "sha256": "071ed5d4743809e7d7b005bef2357536912a5ab18cfab485196222351e735dcd"
+    },
+    "scripts/pretrain_annotation.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/pretrain_annotation.sh",
+      "sha256": "423a49ebb1670a226711a1e86ad734954d682f30a86668a347d3fa626e34b889"
+    },
+    "scripts/train.py": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/train.py",
+      "sha256": "a4f7a00f3467d01aaa7e88bf3845e4d8d2ccb807a24196a0ee4d75ad18957f3f"
+    },
+    "scripts/train_real_sharpa.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/train_real_sharpa.sh",
+      "sha256": "95d89a2f4dc506af8c7440ce33dfadd220749b881c93d1447cac0ef19330f9e1"
+    },
+    "scripts/train_real_yam.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/train_real_yam.sh",
+      "sha256": "210f1799d6c2b623af89b3b8e11f05c37f8ba77cfae3304aab73b997d3d07d00"
+    },
+    "scripts/train_robotwin.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/train_robotwin.sh",
+      "sha256": "50aeca8a21ef6b702d0ddccde9613084086b43f70f6b45a4334beb1a3e661272"
+    },
+    "src/agenticwam/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/__init__.py",
+      "sha256": "1c17d18535019e59ad860be5229e2e4ae8dd67823382575b6942fd11edf2a993"
+    },
+    "src/agenticwam/coding/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/__init__.py",
+      "sha256": "25193411218c68eeb9e6583981ef99ef26131105a2e93fd8f88e05384bb7e04e"
+    },
+    "src/agenticwam/coding/_legacy/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/_legacy/__init__.py",
+      "sha256": "955072d52b056f972c8f64f764b2073b8d54a3f43ee145aa6e250b7a29cfeb59"
+    },
+    "src/agenticwam/coding/_legacy/skill_vocab_v1.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/_legacy/skill_vocab_v1.py",
+      "sha256": "ac3218d180facc939d6d1b3b74a9ba47820d32b32e418c69a3b7577be9249da6"
+    },
+    "src/agenticwam/coding/grounding.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/grounding.py",
+      "sha256": "00705cc050c6e874661951e1449a7df50df97733533d62e06ac399b8c6f96a93"
+    },
+    "src/agenticwam/coding/policy_code_templates.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/policy_code_templates.py",
+      "sha256": "ca2e001b9dcc4108e7be172c804a6aea2b0f3e64afe1f6baef6eb6b98e7c336b"
+    },
+    "src/agenticwam/coding/prompt.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/prompt.py",
+      "sha256": "1c3def6d1c204b496eb3eb761f871157d3614917ab1e13ac9e7e50421a1de25d"
+    },
+    "src/agenticwam/coding/skill_api.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/skill_api.py",
+      "sha256": "49d7e48e6d62353d8fa579ec60651ebdd004e0b451744b734e6666244e0da3dd"
+    },
+    "src/agenticwam/coding/skill_api_yam.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/skill_api_yam.py",
+      "sha256": "b737026b4bee8ebac7cd5f0deb9a97233820400ad9a6315c5f37563119ca8f22"
+    },
+    "src/agenticwam/coding/skill_code.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/skill_code.py",
+      "sha256": "eed707a58166551e938700e8256f1f9d5c12b2e98f1eae88f5256e9452748311"
+    },
+    "src/agenticwam/coding/skill_library.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/coding/skill_library.py",
+      "sha256": "af05cf4ed169c1c3a7777b9357a6c4f7b98e4eb1bb0e3a4395cb70906a960b9a"
+    },
+    "src/agenticwam/datasets/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/agenticwam/datasets/dataset_utils.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/dataset_utils.py",
+      "sha256": "3bc17590049c7cb54061acf8d731b07892e7f530c5d7eeac2613fa77a285a392"
+    },
+    "src/agenticwam/datasets/lerobot/base_lerobot_dataset.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/base_lerobot_dataset.py",
+      "sha256": "80dc2a243af9ed1bc2ef43077846df6a1857d1e1b3a629901ad58803e987cd52"
+    },
+    "src/agenticwam/datasets/lerobot/constants.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/constants.py",
+      "sha256": "11ac9260341e1560c5eb0dd7acb79ed63c74180b8ab4113c27622ff213db417f"
+    },
+    "src/agenticwam/datasets/lerobot/deadline_dataset.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/deadline_dataset.py",
+      "sha256": "5f215069fcdaf077f40a11fb059879598af14e74168c8f2d9af462bf1d7417e8"
+    },
+    "src/agenticwam/datasets/lerobot/lerobot/datasets/compute_stats.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/lerobot/datasets/compute_stats.py",
+      "sha256": "7d7daab219332b5abdfd5ec67ccaf3502e8eb583a17a4e482c3f3d4f7a691e89"
+    },
+    "src/agenticwam/datasets/lerobot/lerobot/datasets/utils.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/lerobot/datasets/utils.py",
+      "sha256": "40f1b94e6ceb50765fb8dfa3d498887c2a0fc2eb49f09770c5f36190e7110c98"
+    },
+    "src/agenticwam/datasets/lerobot/lerobot/datasets/video_utils.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/lerobot/datasets/video_utils.py",
+      "sha256": "cb647a1e955c3279e39ce8d7af7a37ea7432bbd71534c183f9ceebc8557dd89f"
+    },
+    "src/agenticwam/datasets/lerobot/lerobot/lerobot_dataset.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/lerobot/lerobot_dataset.py",
+      "sha256": "d5f993aef1bc0f72364234ccb0f1bda8dc90d2cdbf39130c2d65e581948805a0"
+    },
+    "src/agenticwam/datasets/lerobot/processors/agenticwam_processor.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/processors/agenticwam_processor.py",
+      "sha256": "b1db26c2fb916cb265e237c475ffcfe552f9230a9171f60f5baab3200ec254d2"
+    },
+    "src/agenticwam/datasets/lerobot/processors/base_processor.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/processors/base_processor.py",
+      "sha256": "ca779b6cae35c894f4832ed05377f8268c07ef45d131e3587ff8efd6bcd18799"
+    },
+    "src/agenticwam/datasets/lerobot/prompt_embs_store.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/prompt_embs_store.py",
+      "sha256": "2a65ca2a1215712a8376d6ad4fa7c8d9557f9768a0c71071c46db8769940224b"
+    },
+    "src/agenticwam/datasets/lerobot/robot_video_dataset.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/robot_video_dataset.py",
+      "sha256": "5ccc3c51ce376465cd096ed2db971d38f46dc5d10e528d0b5361cf6bd8045e8f"
+    },
+    "src/agenticwam/datasets/lerobot/shared_stats.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/shared_stats.py",
+      "sha256": "19a7f81f8179c6fc5cdd7b8977b4c2de72c02043ec39b15a5e0f57bcaa20889e"
+    },
+    "src/agenticwam/datasets/lerobot/transforms/action_state_merger.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/transforms/action_state_merger.py",
+      "sha256": "669d6991415fc5eca44b32b129d15fee1e06e2f17d59d90350c252598033b427"
+    },
+    "src/agenticwam/datasets/lerobot/transforms/ego_unified_eef.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/transforms/ego_unified_eef.py",
+      "sha256": "8c42e25da983bf4655f6cb865434b292475f1890b99da4060b15642cffeb0fee"
+    },
+    "src/agenticwam/datasets/lerobot/transforms/image.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/transforms/image.py",
+      "sha256": "0d585864ccbb27671d725443c7fd258c30230e79d378446bfad8a309917e4dd4"
+    },
+    "src/agenticwam/datasets/lerobot/transforms/tianji_sharpa_unified_eef.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/transforms/tianji_sharpa_unified_eef.py",
+      "sha256": "e7d962bda111703b386901458ab9bbaacf10828fd3d399fbd5fdb513c6339569"
+    },
+    "src/agenticwam/datasets/lerobot/transforms/yam_unified_eef.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/transforms/yam_unified_eef.py",
+      "sha256": "4780a3f30c3398a24a9854c0a14a620a2a66fb58f94723156a455a7b1c72f07b"
+    },
+    "src/agenticwam/datasets/lerobot/utils/normalizer.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/utils/normalizer.py",
+      "sha256": "bb35682847fac2dd0bcf434dcbe1b7f4a55b68eba315be8229d5bb7757be8db5"
+    },
+    "src/agenticwam/models/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/__init__.py",
+      "sha256": "294c4c38566907785846029c6f2f09d4aca62a9008037b16fa4988a427102642"
+    },
+    "src/agenticwam/models/cosmos/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/__init__.py",
+      "sha256": "d380a8965a9469483ae0006c173719e7deda41b5d1a5e57ea8cad594e838bea1"
+    },
+    "src/agenticwam/models/cosmos/flash_attention.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/flash_attention.py",
+      "sha256": "301c3a9c7d094ea0ca27cc02f3750d55586341c14f2e49870b9ff6fcf8002f97"
+    },
+    "src/agenticwam/models/cosmos/kv_cache.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/kv_cache.py",
+      "sha256": "e95b31a6da2f3a051b5dec0bff1de64adaacf08eea4ad6a84b943e3dcbb399f4"
+    },
+    "src/agenticwam/models/cosmos/scheduler.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/scheduler.py",
+      "sha256": "525c8e0c2a7d700b1c52862a5d78d7279c84d37b889164ce2ff06982588acc5c"
+    },
+    "src/agenticwam/models/cosmos/text_encoder.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/text_encoder.py",
+      "sha256": "514c883b92366591d4958f2b582b7d1d54d3f3e9acf19d22b8b4bd1d52712031"
+    },
+    "src/agenticwam/models/cosmos/transformer_cosmos.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/transformer_cosmos.py",
+      "sha256": "973a285f844a8e8041c054f67174802964e1528d998af239cddb77db25f8ab76"
+    },
+    "src/agenticwam/models/cosmos/video_tokenizer.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/video_tokenizer.py",
+      "sha256": "22d0184866fad902339c90e0cb52a66d784bec7fbcb6e4d6de2150152843bc92"
+    },
+    "src/agenticwam/models/cosmos/wan22_video_vae.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos/wan22_video_vae.py",
+      "sha256": "48e841a098f3f2ffc3b3bf7ccd182361e382cdcaa7d66d95f2a632f613a22ed6"
+    },
+    "src/agenticwam/models/cosmos_mot/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/__init__.py",
+      "sha256": "04057b4f9cab740e0d979da7491c220e2fa580392b78229b5869c1eecf13f9b8"
+    },
+    "src/agenticwam/models/cosmos_mot/agenticwam_model.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/agenticwam_model.py",
+      "sha256": "9476e3cbdb56a56e8ed036a7fc53b59515f592b990fb7b2983002b28a508863c"
+    },
+    "src/agenticwam/models/cosmos_mot/build.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/build.py",
+      "sha256": "3435a56968893665c27b89f8fbab6ba9ea1b99507f8465bce020e16680849555"
+    },
+    "src/agenticwam/models/cosmos_mot/code_vision.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/code_vision.py",
+      "sha256": "1de8a50541a6b8d869a1bd673173fe6b736c53a5c4a43d0fae387a3184f6422a"
+    },
+    "src/agenticwam/models/cosmos_mot/cosmos_video_expert.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/cosmos_video_expert.py",
+      "sha256": "6f5e74209a49219983813b032abe8b142dd6e8ecb5d72463ea8f0d32c0d83295"
+    },
+    "src/agenticwam/models/cosmos_mot/generic_mot.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/generic_mot.py",
+      "sha256": "55fb022cd9e1fbf97f2cbe1d9be71dae846f658b03bad2cd5334e392e2a7fda9"
+    },
+    "src/agenticwam/models/cosmos_mot/wan_experts.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/wan_experts.py",
+      "sha256": "364d28766f46e417105374a96f41dd1c2223062960e24077e60152a0f11b5156"
+    },
+    "src/agenticwam/models/experts/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/__init__.py",
+      "sha256": "b670a2e759a850b19810999f026cc0572ce70ef01e7d739f1bc4a005962311bc"
+    },
+    "src/agenticwam/models/experts/action_dit.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/action_dit.py",
+      "sha256": "2a25b86b878141696c8e651f886455f0099585aadd04f75fa6cd8ffeb376b7c0"
+    },
+    "src/agenticwam/models/experts/code_expert.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/code_expert.py",
+      "sha256": "7ed8bd05b33baa2bbbe85b74ed6b3e254ad92e8ac8ca53c9d907226384cc45f0"
+    },
+    "src/agenticwam/models/experts/code_memory.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/code_memory.py",
+      "sha256": "cb83eb2400431579aa680e7ee74418a08bc637791f7a07c85827da79eccc4a74"
+    },
+    "src/agenticwam/models/experts/helpers/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/helpers/__init__.py",
+      "sha256": "0a4c1162e846faaab8d076c7d9f4fb2af31bcf51a1bd2804f138436136bb9e1b"
+    },
+    "src/agenticwam/models/experts/helpers/gradient.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/helpers/gradient.py",
+      "sha256": "ba5d8f7272eb029dc6cd2849ca99b70f6ad5abb838d21c818beb0590620dc793"
+    },
+    "src/agenticwam/models/experts/schedulers/scheduler_continuous.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/schedulers/scheduler_continuous.py",
+      "sha256": "2ececce284f7b9fe876965fbf5e11ca7b69caaf693979266b0f63062a589f181"
+    },
+    "src/agenticwam/models/experts/wan_video_dit.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/wan_video_dit.py",
+      "sha256": "c36c9b5be908f5cd719a6c2d08a2c4de0108cf7c1237fdd0b2e04bb555f6ae2e"
+    },
+    "src/agenticwam/runtime.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/runtime.py",
+      "sha256": "4eec17e252c85da63e4cb80e4915d8f86051e5ba2f15b1ef92f136ddaf451fd3"
+    },
+    "src/agenticwam/trainer.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/trainer.py",
+      "sha256": "3d97aaa3d7535e52ae48a905cdc97c0e627dbe213f80e23b43bca31d8e5c6a74"
+    },
+    "src/agenticwam/utils/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/__init__.py",
+      "sha256": "2893c05b99b17162941c70a41859c2808f8ae390be367a26cac7d5ab93ee197b"
+    },
+    "src/agenticwam/utils/config_resolvers.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/config_resolvers.py",
+      "sha256": "6c281e4893fef8a1983a34be793225eb66dde9647b63899f7ca1436957a800dc"
+    },
+    "src/agenticwam/utils/fs.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/fs.py",
+      "sha256": "69e6df236b43360428a613686c8f37c531c0d16a3a2c5b06a725c46b49d657c5"
+    },
+    "src/agenticwam/utils/logging_config.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/logging_config.py",
+      "sha256": "4c2df0f9766c2a636b7afdb2b3a5b2347c34b1499e88e123fb8aae559c6d8c26"
+    },
+    "src/agenticwam/utils/misc.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/misc.py",
+      "sha256": "05aa51247936a8d3faac27f90b78b65ff83a688259bed55d114b6a617ced532d"
+    },
+    "src/agenticwam/utils/paths.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/paths.py",
+      "sha256": "42e79fdfccbc100897975d9e29a1dfb158b4e8d851e758696f74ab692b2c474c"
+    },
+    "src/agenticwam/utils/pytorch_utils.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/pytorch_utils.py",
+      "sha256": "ffc483e7fb435cd654326750eaffdbfc9243837c3140dcc74e45b24abb751a33"
+    },
+    "src/agenticwam/utils/samplers.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/samplers.py",
+      "sha256": "4d3bd9b2d498f4ad8f2cf9765d60c4bf5368fa6fa2a7d42d0db6210f66899652"
+    },
+    "src/agenticwam/utils/video_io.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/video_io.py",
+      "sha256": "9e9898b021a44e87aa1b4e6d13e3755a9869a2e27a7eb53c72a6802808d5bd80"
+    },
+    "src/agenticwam/utils/video_metrics.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/utils/video_metrics.py",
+      "sha256": "aaa37e458cc9e4bb79a17923b5ff5900c97b4309f7abd50db44cf76e9143ffd6"
+    },
+    "src/hydra_plugins/agenticwam_configs/__init__.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/hydra_plugins/agenticwam_configs/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/hydra_plugins/agenticwam_configs/agenticwam_configs.py": {
+      "source": "/home/yilianli/project/agentic-wam/src/hydra_plugins/agenticwam_configs/agenticwam_configs.py",
+      "sha256": "708ad0731cb6613bdf82ec9f01002610162292f2557dd11b8cdf16999e4b65db"
+    },
+    "utils/add_lerobot_stats.py": {
+      "source": "/home/yilianli/project/agentic-wam/utils/add_lerobot_stats.py",
+      "sha256": "06b6dade58a01154fd376b4259055dff4fdab9e7ee83752a733f5f7c6c7dc1d2"
+    },
+    "utils/make_stats.py": {
+      "source": "/home/yilianli/project/agentic-wam/utils/make_stats.py",
+      "sha256": "0a49f216fc97c19e3ffba69010bc54c9cf662cb6b75138871114a07d74c15f2f"
+    },
+    "utils/verify_instruction_embeds.py": {
+      "source": "/home/yilianli/project/agentic-wam/utils/verify_instruction_embeds.py",
+      "sha256": "984c3f6b3e3f757d5df818890719cb9b5461bdae4ff9dd61110cdb4bf1a912a9"
+    },
+    "utils/yam_fk_ik/REPLAY_GUIDE.md": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/REPLAY_GUIDE.md",
+      "sha256": "fc1347ebdda221bae1c6a0a3e9ba59df64bc94b5f5515958266bb6e0cedce7d6"
+    },
+    "utils/yam_fk_ik/export_sample.py": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/export_sample.py",
+      "sha256": "75c003e1f6f95491d38d3126a1a8931352c8ccb7899332fee995ecab261eca10"
+    },
+    "utils/yam_fk_ik/sample_trajectory/action_delta_64d.npy": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/action_delta_64d.npy",
+      "sha256": "7d0752e3dc42238341df03a1b4cda66f6def4178ebbeef291e2b8c6a45d5820d"
+    },
+    "utils/yam_fk_ik/sample_trajectory/ik_replay_joints_14d.npy": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/ik_replay_joints_14d.npy",
+      "sha256": "44a822d94d7a9517c1357f262e0893cbbbfd7683c5d1ee815bacb8afc9fedcd7"
+    },
+    "utils/yam_fk_ik/sample_trajectory/meta.json": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/meta.json",
+      "sha256": "20ed877faafa73f1a72661c5c03afd37145e327af52eaf0506ac13fc93d46a4c"
+    },
+    "utils/yam_fk_ik/sample_trajectory/raw_action_14d.npy": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/raw_action_14d.npy",
+      "sha256": "2a124f2e90d5760207d7b29936e3b9db2256dc227a7708510b47c6666f2d8be4"
+    },
+    "utils/yam_fk_ik/sample_trajectory/raw_state_14d.npy": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/raw_state_14d.npy",
+      "sha256": "e9fbd86fa793a38d8e9039080fdec02aac813c24aa76b9a6e9adbe86cbcf213b"
+    },
+    "utils/yam_fk_ik/sample_trajectory/state_64d.npy": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/sample_trajectory/state_64d.npy",
+      "sha256": "647f5fdbba0bc5bed01ceb7ff24afb5d6674d65f4561b63136035b2cb990038b"
+    },
+    "utils/yam_fk_ik/station/station/_compat_station.xml": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/_compat_station.xml",
+      "sha256": "8094e327ad84e12a085ef212e7b160c4703b45f36343ef6bf19295d839f51a50"
+    },
+    "utils/yam_fk_ik/station/station/assets/base_visual_gate.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/base_visual_gate.stl",
+      "sha256": "7455ecaa1a22959ccb01fc5d0ef2f4c7de04a46648611be716c4d45c9b9259bf"
+    },
+    "utils/yam_fk_ik/station/station/assets/d405.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/d405.stl",
+      "sha256": "8a9a84dd9c9a67687e5ad0b37a7ed334dbfea6b0f995fef28524cc8da5f21ed2"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2.stl",
+      "sha256": "5ac61c0313ed00c38655e41681af1b8b307cf8d5ef57209a75f215cea02df754"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__10.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__10.stl",
+      "sha256": "b879cc07f547b7a2ac52e428dd206e80a0d4b0e805cb56b9a8230df04a690923"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__11.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__11.stl",
+      "sha256": "af220d2a51e8444392aef36e2fe4a6f69aed22bc292a7f38e54da3b4f5253434"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__12.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__12.stl",
+      "sha256": "e79614869bd2283f70fafa150ce748d5b6c03377a651448c6fe9893a22f6d1de"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__13.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__13.stl",
+      "sha256": "32b62f14f00ea82bfc79b935f7dac32c7cb276a3abc0aae8362cbba3fb1326de"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__14.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__14.stl",
+      "sha256": "72d2178789dd5e0358c2caf9dad90b8881e505f4c52a8d6d18c71b5e93e8c84b"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__15.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__15.stl",
+      "sha256": "ca8788184d54f30c18482cb9b48dffb010a93dbc029054b6cc515083a740d324"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__16.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__16.stl",
+      "sha256": "18bb99691eed524393e8f3a0ff29e79d97ab75689bc92144bbdfafa2cc79d37b"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__17.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__17.stl",
+      "sha256": "6513dbd192d2bf3a4f7016231f1ba5eca93916c9ebfdc334e9b435ca1d302ff6"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__2.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__2.stl",
+      "sha256": "30dab41f14bae95d737abca3c934eb5d570ab107dff0b40952fbdfb9d07eab79"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__3.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__3.stl",
+      "sha256": "9fd96f5ad387fe7dd96eaa65e386637800e2f5637b6167fbad4ecb37d8598f47"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__4.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__4.stl",
+      "sha256": "33c0e7ef538e2c4473efa9c4ef2a8441b6094b65090b4dec71abe82001d974df"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__5.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__5.stl",
+      "sha256": "09f08e7dead2d6363618471adadb1b94af39e8056676670f3fd21ec06c197b20"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__6.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__6.stl",
+      "sha256": "888b5919d10dbfb59b964c3cafc2ddbdac3b5426e20dd13bcaf4baedd5ee15c9"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__7.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__7.stl",
+      "sha256": "2d64b18f1e70b0460eb53335d340b7c879976a3093ec67b07bcb7245e371a91d"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__8.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__8.stl",
+      "sha256": "db3708da6b14daf3fc9a1909a8325b68f65ff69146cdd20b69a9ddc4ce51f50d"
+    },
+    "utils/yam_fk_ik/station/station/assets/model2__9.stl": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/assets/model2__9.stl",
+      "sha256": "74969d09b8b7f75cc984c5c7e5526d2941c6724f48b3efa1fa8730cc7820f4f5"
+    },
+    "utils/yam_fk_ik/station/station/station.urdf": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/station.urdf",
+      "sha256": "c34e01552ffdd95e8dd45852831f516183de660a90cb98c249247e591e7ce4dd"
+    },
+    "utils/yam_fk_ik/station/station/station.xml": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/station/station/station.xml",
+      "sha256": "7e7e4b70766496757de4021ca961696af32d7015f673be9935e85d9242a8823e"
+    },
+    "utils/yam_fk_ik/yam_kinematics.py": {
+      "source": "/home/yilianli/project/agentic-wam/utils/yam_fk_ik/yam_kinematics.py",
+      "sha256": "ad4ce471d96ef74427fbdb4e3e36a35db7d4935f0d0a0f7e49780c306f4d41c3"
+    },
+    "src/tau0_proposal/__init__.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/__init__.py",
+      "sha256": "e9481e4fe31a37f0ca2dc6d23d6a67eea53868ce28d793e9e291ea4932780cfe"
+    },
+    "src/tau0_proposal/runtime.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/runtime.py",
+      "sha256": "760dc98f2610f1492d2061e3312bc0e5cd958dc8365b3e479a398421feced67a"
+    },
+    "src/tau0_proposal/format.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/format.py",
+      "sha256": "afb1c79fc52a15f318a96e6b94fde93e01317102d9f45c9f4c04ed1db5f78888"
+    },
+    "src/tau0_proposal/data.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/data.py",
+      "sha256": "f9da32bb15555812c567963331424e54668f9c673addc671ed9334429412931f"
+    },
+    "src/tau0_proposal/serve.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/serve.py",
+      "sha256": "2af27f158c4b598098732dc076f84d1652eae91c144ba4af62628aecff887de2"
+    },
+    "src/tau0_proposal/infer.py": {
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/infer.py",
+      "sha256": "7126592f00fe1878182340b1394f18be72f72ec1613b14a99955a71f28f4807d"
+    },
+    "requirements/proposal/requirements.txt": {
+      "source": "/home/yilianli/project/tau-0-vla/high_level/proposal/requirements.txt",
+      "sha256": "690101e24090c75e925f391166d823f7922af21b423f3ca0c49729ee7df7c9d3"
+    },
+    "requirements/proposal/constraints.txt": {
+      "source": "/home/yilianli/project/tau-0-vla/high_level/proposal/constraints.txt",
+      "sha256": "af22e335427e1befdf94fa369bec4011a5b8b54f77e6cb845109c26dbce7b0b7"
+    },
+    "configs/paths/local.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/paths/local.yaml",
+      "sha256": "9c1eccfece22d60f9d31a7cc7d36f04b5bda217f17645a893544ada3b6f98536"
+    },
+    "configs/robotwin/site.yaml": {
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/site.yaml",
+      "sha256": "4075c3b85c44fa07b64e5231e2f9cd41f30108fff4fe793653e18cdaf34bcc8c"
+    },
+    "scripts/activate_local.sh": {
+      "source": "/home/yilianli/project/agentic-wam/scripts/activate_local.sh",
+      "sha256": "0abe21cf1b54c51a459ce49d1712b39beffe0dc45dfc5074e6ecaab4a7353afb"
+    },
+    ".local/bin/python": {
+      "source": "/home/yilianli/project/agentic-wam/.local/bin/python",
+      "sha256": "6ca3d90ad8bad0af8cd6459ad826f8ca8c82015b5e3e0f78bb68914d123f9841"
+    }
+  }
+}

@@ -1,0 +1,2135 @@
+--- a/configs/paths/local.yaml
++++ b/configs/paths/local.yaml
+@@ -12,3 +12,7 @@
+ robotwin_official_labels: /path/to/robotwin2.0_labels
+ robotwin_cap: /path/to/robotwin_cap
+ robotwin_cap_slices: /path/to/robotwin_cap_slices
++
++# CaP-subtask training cache and shared normalization.
++robotwin_subtasks: ${oc.env:CAP_SUBTASK_CACHE_ROOT,/home/yilianli/project/CaP-subtask/data_local/tau0_subtasks}
++robotwin_dataset_stats: /home/yilianli/project/models/agentic-wam-robotwin-release/dataset_stats.json
+--- a/configs/robotwin/site.yaml
++++ b/configs/robotwin/site.yaml
+@@ -1,8 +1,8 @@
+-python_bin: /home/yilianli/project/agentic-wam/.local/bin
++python_bin: /home/yilianli/project/CaP-subtask/.local/bin
+ agenticwam_root: ${repo}
+ robotwin_root: /home/yilianli/project/agentic-wam/codegen/sim/capsim/third_party/RoboTwin
+-aspire_root: ${agenticwam_root}/codegen/sim
+-sim_dir: ${aspire_root}
++aspire_root: /home/yilianli/project/agentic-wam/codegen/sim
++sim_dir: /home/yilianli/project/agentic-wam/codegen/sim
+ serving_subdir: capsim/serving
+ seg_venv: /home/yilianli/.conda/envs/codegen-perception
+ checkpoints_root: /home/yilianli/project/models
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -3,9 +3,9 @@
+ build-backend = "setuptools.build_meta"
+ 
+ [project]
+-name = "agenticwam"
+-version = "0.1.0"
+-description = "AgenticWAM: Agentic World Action Models (AW-0)"
++name = "cap-subtask"
++version = "0.2.0"
++description = "CaP-subtask: Tau0 subtask-conditioned AgenticWAM"
+ requires-python = ">=3.10"
+ license = {text = "BSD-2-Clause"}
+ dependencies = [
+@@ -49,4 +49,4 @@
+ 
+ [tool.setuptools.packages.find]
+ where = ["src"]
+-include = ["agenticwam*"]
++include = ["agenticwam*", "tau0_proposal*"]
+--- a/robotwin/deploy/deploy_policy.py
++++ b/robotwin/deploy/deploy_policy.py
+@@ -283,6 +283,13 @@
+         self.model = self.model.to(device=device, dtype=_agenticwam_deploy_dtype()).eval()  # bf16 throughout: matches DeepSpeed bf16 training, consistent (no bf16/fp32 code-expert mismatch) + fast (fp32 video expert was ~20x slower in the 128-step code-gen cascade)
+         self.device = device
+         self.n_cameras = int(n_cameras)
++        self.high_level_planner = None
++        self._last_subtask = None
++        if getattr(self.model, "require_high_level_subtask", False):
++            from agenticwam.coding.tau0_client import ProposalClient
++            planner_config = os.environ.get("CAP_SUBTASK_PLANNER_CONFIG") or str(
++                Path(__file__).resolve().parents[2] / "configs/subtask/planner.yaml")
++            self.high_level_planner = ProposalClient.from_config(planner_config)
+ 
+         self.processor: AgenticWAMProcessor = instantiate(processor_cfg).eval()
+         self.processor.set_normalizer_from_stats(load_dataset_stats_from_json(str(dataset_stats_path)))
+@@ -478,6 +485,20 @@
+         return AgenticWAMCosmosRobotWinPolicy._CANON_MAP.get(task, instruction)
+ 
+     def _infer_action_chunk(self, observation: Dict[str, Any], instruction: str) -> np.ndarray:
++        high_level_subtask = observation.get("high_level_subtask")
++        if self.high_level_planner is not None:
++            if high_level_subtask is None:
++                proposal = self.high_level_planner.predict_robotwin(instruction, observation)
++                high_level_subtask = proposal["subtask"]
++            else:
++                from agenticwam.coding.subtask_conditioning import normalize_subtask
++                high_level_subtask = normalize_subtask(high_level_subtask, required=True)
++                proposal = {"subtask": high_level_subtask, "source": "provided"}
++            self._last_subtask = high_level_subtask
++            if self.video_log_dir is not None:
++                import json
++                with (self.video_log_dir / f"episode{self.episode_count}_subtasks.jsonl").open("a") as handle:
++                    handle.write(json.dumps({"replan": self.step_count, **proposal}, ensure_ascii=False) + "\n")
+         obs_video = self._build_obs_video(observation)
+         state = np.asarray(observation["joint_action"]["vector"], dtype=np.float32)
+         proprio = self._normalize_state(state).to(self.device)              # [1,64]
+@@ -545,6 +566,7 @@
+                     # Composed above to match this checkpoint's training prompt:
+                     # skill + wrapped instruction, or raw task for stage slices.
+                     instruction=code_instruction, code_cache=self.code_cache, return_video=want_video,
++                    high_level_subtask=high_level_subtask,
+                 )
+             else:
+                 out = self.model.infer_action(
+@@ -717,6 +739,9 @@
+ 
+     def reset(self) -> None:
+         self.pending_actions.clear()
++        if self.high_level_planner is not None:
++            self.high_level_planner.reset()
++        self._last_subtask = None
+         self.episode_count += 1
+         if self.hybrid is not None:
+             self.hybrid.on_reset()          # [hybrid] per-episode arbiter state
+--- a/robotwin/hybrid_eval/launch.py
++++ b/robotwin/hybrid_eval/launch.py
+@@ -126,6 +126,7 @@
+         })
+     overrides = [
+         f"ckpt={ckpt}", "gpu_id=0", f"seed={a.seed}",
++        f"EVALUATION.policy_name={model.get('policy_name', 'agenticwam_policy')}",
+         f"EVALUATION.robotwin_root={site['robotwin_root']}",
+         f"EVALUATION.task_name={a.task}", f"EVALUATION.task_config={a.proto}",
+         f"EVALUATION.eval_num_episodes={a.episodes}", f"task={model['eval_task']}",
+@@ -149,6 +150,7 @@
+             "seed": a.seed, "model": model["name"], "ckpt": str(ckpt), "episodes": a.episodes,
+             "gen_tokens": gen_tokens, "nis": nis, "replan": replan, "baseline": a.baseline,
+             "use_code_expert": use_code, "eval_task": model["eval_task"],
++            "subtask_conditioning": bool(model.get("subtask_conditioning", False)),
+             "instruction_type": instruction_type,
+             "eval_preproc": env.get("AGENTICWAM_EVAL_PREPROC", "parity"),
+             "eval_preproc_crop": float(env.get("AGENTICWAM_EVAL_PREPROC_CROP", "0.95")),
+--- a/scripts/activate_local.sh
++++ b/scripts/activate_local.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Source this file from Bash: source scripts/activate_local.sh
+ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+-  echo "Use: source /home/yilianli/project/agentic-wam/scripts/activate_local.sh" >&2
++  echo "Use: source /home/yilianli/project/CaP-subtask/scripts/activate_local.sh" >&2
+   exit 1
+ fi
+ 
+@@ -29,8 +29,8 @@
+ unset -f _agenticwam_activate
+ 
+ case ":${PYTHONPATH:-}:" in
+-  *:/home/yilianli/project/agentic-wam/src:*) ;;
+-  *) export PYTHONPATH="/home/yilianli/project/agentic-wam/src${PYTHONPATH:+:$PYTHONPATH}" ;;
++  *:/home/yilianli/project/CaP-subtask/src:*) ;;
++  *) export PYTHONPATH="/home/yilianli/project/CaP-subtask/src${PYTHONPATH:+:$PYTHONPATH}" ;;
+ esac
+ export HF_HOME="${HF_HOME:-/home/yilianli/.cache/huggingface}"
+ export NO_PROXY="${NO_PROXY:-${no_proxy:-}}"
+@@ -59,4 +59,4 @@
+ done
+ unset _agenticwam_include
+ 
+-cd /home/yilianli/project/agentic-wam || return
++cd /home/yilianli/project/CaP-subtask || return
+--- a/scripts/eval_robotwin_release.py
++++ b/scripts/eval_robotwin_release.py
+@@ -19,6 +19,7 @@
+ def main(argv=None):
+     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+     parser.add_argument("mode", choices=("wam", "hybrid"))
++    parser.add_argument("--config", help="evaluation config name (e.g. cap_subtask)")
+     parser.add_argument("--ckpt", help="override the released checkpoint")
+     parser.add_argument("--vis-gpu", type=int, help="start/check hybrid perception on this GPU")
+     parser.add_argument("--vis-gpu-seg", type=int, help="optional separate GPU for SAM3 and GraspNet")
+@@ -26,19 +27,27 @@
+     sys.path.insert(0, str(ROOT / "robotwin"))
+     from hybrid_eval import config, vision
+ 
+-    model = args.mode
++    model = args.config or args.mode
+     try:
+         site = config.site()
+         settings = config.eval_config(model, site)
+         checkpoint = config.resolve_checkpoint(settings, args.ckpt)
+         required = [settings.get("dataset_stats") or site["dataset_stats"]]
+-        if args.mode == "wam":
++        if args.mode == "wam" and settings.get("skill_prompt"):
+             required.append(settings["skill_prompt"])
+         for path in required:
+             if not Path(path).is_file():
+                 raise FileNotFoundError(f"release asset missing: {path}; download the complete model bundle")
+     except (KeyError, ValueError, FileNotFoundError) as exc:
+         parser.exit(1, str(exc) + "\n")
++
++    if settings.get("subtask_conditioning") and "--dry-run" not in benchmark_args:
++        from agenticwam.coding.tau0_client import ProposalClient
++        planner_config = os.environ.get("CAP_SUBTASK_PLANNER_CONFIG") or str(ROOT / "configs/subtask/planner.yaml")
++        try:
++            ProposalClient.from_config(planner_config).health()
++        except ValueError as exc:
++            parser.exit(1, str(exc) + "\nStart scripts/serve_tau0_proposal.sh first.\n")
+ 
+     if args.mode == "hybrid" and "--dry-run" not in benchmark_args:
+         if args.vis_gpu is not None:
+--- a/scripts/preflight_sft.py
++++ b/scripts/preflight_sft.py
+@@ -189,6 +189,32 @@
+     elif isinstance(node, ListConfig):
+         for i in range(len(node)):
+             yield from dataset_nodes(node[i], f"{label}[{i}]")
++
++
++def check_subtask_cache(r, split, dataset, model):
++    if not model.get("high_level_subtask_conditioning", False):
++        return
++    from agenticwam.coding.subtask_cache import SubtaskCache
++    path = dataset.get("subtask_cache_path")
++    if not path or not dataset.get("require_high_level_subtask"):
++        r.fail("subtask", f"{split}: conditioned model needs a required subtask cache")
++        return
++    try:
++        cache = SubtaskCache(path)
++        selected = dataset.get("episode_indices")
++        if isinstance(selected, str):
++            selected = json.loads(Path(selected).read_text())
++        for root in dataset["dataset_dirs"]:
++            selection = selected
++            if hasattr(selected, "items"):
++                selection = selected.get(str(root), [])
++            if selection is None:
++                selection = [json.loads(line)["episode_index"]
++                             for line in (Path(root) / "meta/episodes.jsonl").read_text().splitlines() if line.strip()]
++            cache.validate_selection(root, [int(ep) for ep in selection])
++        r.ok("subtask", f"{split}: metadata binding and episode coverage verified")
++    except Exception as exc:
++        r.fail("subtask", f"{split}: {exc}")
+ 
+ 
+ def main():
+@@ -227,7 +253,9 @@
+         else:
+             r.ok("robot", f"{lbl}: {names or 'no transform'}")
+ 
+-    missing = [(k, v) for k, v in walk_paths(cfg) if k.rsplit(".", 1)[-1] not in SKIP_PATH_KEYS and not os.path.exists(v)]
++    # Referenced paths are resolved where used; unused paths templates are not inputs.
++    missing = [(k, v) for k, v in walk_paths(cfg) if not k.startswith("paths.")
++               and k.rsplit(".", 1)[-1] not in SKIP_PATH_KEYS and not os.path.exists(v)]
+     for k, v in missing:
+         r.fail("paths", f"{k} = {v} does not exist")
+     if not missing:
+@@ -236,6 +264,7 @@
+         sys.exit(1)                                              # later checks would only re-report it
+ 
+     for lbl, d in nodes:
++        check_subtask_cache(r, lbl, d, cfg.model)
+         check_code_cache(r, lbl, d)
+         if a.robot != "robotwin":
+             check_instructions(r, lbl, d)
+--- a/src/agenticwam/datasets/lerobot/base_lerobot_dataset.py
++++ b/src/agenticwam/datasets/lerobot/base_lerobot_dataset.py
+@@ -258,6 +258,12 @@
+         if self.processor is not None:
+             sample = self.processor.preprocess(sample)
+ 
++        # Preserve raw trajectory identity even when a processor reconstructs its output.
++        # These refer to the frame actually loaded after retries, not the requested idx.
++        for key in ("dataset_index", "episode_index", "frame_index"):
++            if key in lerobot_sample:
++                sample[key] = lerobot_sample[key]
++
+         return sample
+ 
+     def set_processor(self, processor: BaseProcessor):
+--- a/src/agenticwam/datasets/lerobot/robot_video_dataset.py
++++ b/src/agenticwam/datasets/lerobot/robot_video_dataset.py
+@@ -16,6 +16,8 @@
+ from ..dataset_utils import ResizeSmallestSideAspectPreserving, CenterCrop, Normalize
+ from agenticwam.utils.logging_config import get_logger
+ from agenticwam.utils import misc, pytorch_utils
++from agenticwam.coding.subtask_cache import SubtaskCache
++from agenticwam.coding.subtask_conditioning import SubtaskConditionError
+ from accelerate import PartialState
+ logger = get_logger(__name__)
+ 
+@@ -69,6 +71,8 @@
+         code_slices_no_history: bool = False,  # ablation: omit completed-slice history from prompt
+         code_slices_summary: bool = False,  # BOUNDED event log: "# Completed: k/n. Last: <slice>" (vs full transcript)
+         save_norm_stats: bool = True,  # shared pretraining persists one copy in runtime
++        subtask_cache_path: Optional[str] = None,
++        require_high_level_subtask: bool = False,
+     ):
+         self.lerobot_dataset = BaseLerobotDataset(
+             dataset_dirs=dataset_dirs,
+@@ -82,6 +86,15 @@
+             global_sample_stride=global_sample_stride,
+         )
+     
++        if require_high_level_subtask and not subtask_cache_path:
++            raise SubtaskConditionError("Provide subtask_cache_path for the conditioned dataset")
++        self.subtask_cache = SubtaskCache(subtask_cache_path) if subtask_cache_path else None
++        if self.subtask_cache is not None:
++            for dataset in self.lerobot_dataset.multi_dataset._datasets:
++                selected = dataset.episodes
++                if selected is None:
++                    selected = list(dataset.meta.episodes)
++                self.subtask_cache.validate_selection(dataset.root, selected)
+         self.num_frames = num_frames
+         self.action_video_freq_ratio = action_video_freq_ratio
+         
+@@ -364,6 +377,12 @@
+                                                 # skill-only block wins and the event log vanishes
+             data["code_history"] = hist_txt
+             data["prompt_nohist"] = prompt_nh
++        if self.subtask_cache is not None:
++            # Use the sample ACTUALLY returned after any retry, never the requested idx.
++            dataset_i = int(sample.get("dataset_index", 0))
++            root = self.lerobot_dataset.dataset_dirs[dataset_i]
++            data["high_level_subtask"] = self.subtask_cache.lookup(
++                root, int(sample["episode_index"]), int(sample["frame_index"]))
+         return data
+ 
+     def _get_code_slice(self, task: str, idx: int, episode_index=None):
+@@ -480,6 +499,8 @@
+             _use = idx if _attempt == 0 else int(np.random.randint(len(self)))
+             try:
+                 return self._get(_use)
++            except SubtaskConditionError:
++                raise
+             except Exception as e:
+                 if _attempt == 0:
+                     print(f"Error processing sample idx {idx}: {e}. Retrying with random samples.")
+--- a/src/agenticwam/models/cosmos_mot/agenticwam_model.py
++++ b/src/agenticwam/models/cosmos_mot/agenticwam_model.py
+@@ -21,6 +21,7 @@
+ from __future__ import annotations
+ 
+ import os
++from pathlib import Path
+ 
+ from typing import Any, Dict, Optional
+ 
+@@ -29,6 +30,7 @@
+ import torch.nn.functional as F
+ 
+ from agenticwam.utils.logging_config import get_logger
++from agenticwam.coding.subtask_conditioning import condition_code_prompt, normalize_subtask, SubtaskConditionError
+ 
+ _VIZ = {"active": False, "done": False, "steps": []}
+ from .generic_mot import GenericMoT
+@@ -205,12 +207,22 @@
+ 
+     @torch.no_grad()
+     def save_checkpoint(self, path: str, optimizer=None, step: Optional[int] = None):
+-        torch.save({"model": self._trainable_state_dict(), "step": step}, path)
++        torch.save({"model": self._trainable_state_dict(), "step": step,
++                    "conditioning": {"kind": "tau0_subtask_text_v1",
++                                     "required": getattr(self, "require_high_level_subtask", False),
++                                     "max_subtask_tokens": getattr(self, "subtask_max_tokens", 128)}}, path)
+         return path
+ 
+     @torch.no_grad()
+     def load_checkpoint(self, path: str, optimizer=None):
+         ckpt = torch.load(path, map_location="cpu")
++        conditioning = ckpt.get("conditioning", {}) if isinstance(ckpt, dict) else {}
++        if conditioning.get("required") and not getattr(self, "require_high_level_subtask", False):
++            raise SubtaskConditionError("This checkpoint requires the cap_subtask model configuration")
++        if conditioning.get("required") and conditioning.get("kind") != "tau0_subtask_text_v1":
++            raise SubtaskConditionError("Unsupported subtask-conditioning checkpoint schema")
++        if getattr(self, "require_high_level_subtask", False) and not conditioning.get("required"):
++            logger.warning("Loading baseline weights as initialization; this is not a subtask-finetuned checkpoint")
+         sd = ckpt.get("model", ckpt) if isinstance(ckpt, dict) else ckpt
+         res = self.load_state_dict(sd, strict=False)  # frozen backbones intentionally absent
+         logger.info(f"agenticwam load_checkpoint {path}: loaded {len(sd)} trainable tensors "
+@@ -630,7 +642,8 @@
+                               if (getattr(self, "code_memory_enabled", False) and sample.get("prompt_nohist") is not None)
+                               else (sample.get("prompt_code") if sample.get("prompt_code") is not None
+                                     else sample.get("prompt"))),
+-                codes=sample["policy_code"], device=device)
++                codes=sample["policy_code"], device=device,
++                high_level_subtasks=sample.get("high_level_subtask"))
+             _mem_M = None; _mem_K = 0
+             if getattr(self, "code_memory_enabled", False) and self.code_memory is not None:
+                 _bs = input_ids.shape[0]; _mem_K = int(self.code_memory.K)
+@@ -1101,7 +1114,7 @@
+     def _infer_action_joint(self, obs_video, proprio, prompt_embs, action_horizon,
+                             num_video_frames: int = 9, num_inference_steps: int = 20,
+                             sigma_shift=None, instruction=None, max_code_tokens: int = 128,
+-                            return_video: bool = False):
++                            return_video: bool = False, high_level_subtask=None):
+         """FULLY JOINT tri-modal denoising (LLaDA code). Initialise video~noise, action~noise, and the
+         code as an all-<MASK> slot; over the SHARED T steps, ONE MoT forward co-updates all three:
+         video/action by flow-matching, code by confidence-unmasking gen_len/T tokens per step. The code
+@@ -1132,15 +1145,20 @@
+             # and AGENTICWAM_CODE_NO_HISTORY are exported by robotwin/hybrid_eval/launch.py.
+             _pf = os.environ.get("AGENTICWAM_CODE_PREAMBLE_FILE")
+             if _pf and os.path.exists(_pf):
++                _preamble_text = Path(_pf).read_text()
+                 _hist = ""   # completed slices are not tracked at generation time
+                 if getattr(self, "code_memory_enabled", False) or os.environ.get("AGENTICWAM_CODE_NO_HISTORY", "0") == "1":
+                     # models trained on prompt_nohist / code_slices_no_history: no "# Completed:" block
+                     # (inserting one collapses their accuracy).
+                     prompt = (f"# Instruction: {instruction}\n# Helper library:\n"
+-                              f"{open(_pf).read()}# Next:\n")
++                              f"{_preamble_text}# Next:\n")
+                 else:
+                     prompt = (f"# Instruction: {instruction}\n# Helper library:\n"
+-                              f"{open(_pf).read()}# Completed:\n{_hist}# Next:\n")
++                              f"{_preamble_text}# Completed:\n{_hist}# Next:\n")
++            prompt = condition_code_prompt(
++                prompt, high_level_subtask, tokenizer=ce.tokenizer,
++                max_subtask_tokens=getattr(self, "subtask_max_tokens", 128),
++                required=getattr(self, "require_high_level_subtask", False))
+             try:
+                 pids = ce.tokenizer.encode(prompt, add_special_tokens=False)
+             except TypeError:
+@@ -1148,6 +1166,8 @@
+             plen = len(pids)
+             gen_len = int(max_code_tokens)
+             cap = int(ce.freqs.shape[0])
++            if high_level_subtask is not None and plen + gen_len > ce.max_code_tokens:
++                raise SubtaskConditionError("Conditioned inference prompt + canvas exceeds max_code_tokens")
+             if plen + gen_len > cap:
+                 gen_len = cap - plen
+             # E3: prepend K read-only memory slots (mirrors training's dummy-prefix trick).
+@@ -1439,12 +1459,16 @@
+                               num_video_frames: int = 9, num_inference_steps: int = 20,
+                               sigma_shift=None, instruction=None, policy_code=None,
+                               code_cache=None, max_code_tokens: Optional[int] = None,
+-                              return_video: bool = False):
++                              return_video: bool = False, high_level_subtask=None):
+         """3-expert (code-in-middle) inference. (1) AR-generate the policy code conditioned on the
+         obs (code->video joint attention), then (2) JOINTLY co-denoise the full future video +
+         action with the FIXED code, the action attending to the full (per-step noised) video + the
+         code — matching the code-in-middle training coupling (video autonomous -> code -> action).
+         Returns (action[Ta,adim] fp32 cpu, policy_code[str][, gen_video])."""
++        high_level_subtask = normalize_subtask(
++            high_level_subtask, required=getattr(self, "require_high_level_subtask", False))
++        if high_level_subtask is not None and getattr(self.code_expert, "code_objective", "") != "joint":
++            raise SubtaskConditionError("Subtask-conditioned inference currently supports the joint objective")
+         self.dit.eval()
+         device = self.device
+         cdt = next(self.action_expert.parameters()).dtype
+@@ -1458,7 +1482,8 @@
+                 obs_video, proprio, prompt_embs, action_horizon,
+                 num_video_frames=num_video_frames, num_inference_steps=num_inference_steps,
+                 sigma_shift=sigma_shift, instruction=instruction,
+-                max_code_tokens=max_code_tokens, return_video=return_video)
++                max_code_tokens=max_code_tokens, return_video=return_video,
++                high_level_subtask=high_level_subtask)
+         if proprio is not None and proprio.dim() == 2:
+             proprio = proprio.unsqueeze(1)
+         with torch.autocast(device_type="cuda", dtype=cdt,
+--- a/src/agenticwam/models/cosmos_mot/build.py
++++ b/src/agenticwam/models/cosmos_mot/build.py
+@@ -238,6 +238,9 @@
+     code_memory_heads: int = 8,
+     code_memory_selfgen_p: float = 0.5,    # scheduled-sampling prob: encode SELF-predicted history
+ 
++    high_level_subtask_conditioning: bool = False,
++    subtask_max_tokens: int = 128,
++
+     load_pretrain: bool = False,
+     wan_vae_path: Optional[str] = None,
+     use_gradient_checkpointing: bool = True,
+@@ -249,6 +252,10 @@
+     Defaults to the training configuration (no in-model text encoder → cached prompt_embs;
+     Beta(7,1) video sigma; fp32 params for autocast training).
+     """
++    if high_level_subtask_conditioning and (not use_code_expert or code_objective != "joint" or code_memory):
++        raise ValueError("CaP-subtask requires use_code_expert=true, code_objective=joint and code_memory=false")
++    if high_level_subtask_conditioning and os.environ.get("AGENTICWAM_FAST_JOINT", "") not in ("", "0"):
++        raise ValueError("The upstream fast-joint override has no Tau0 conditioning; use the standard joint path")
+     model = build_agenticwam_cosmos(
+         action_dim=action_dim,
+         proprio_dim=proprio_dim,
+@@ -270,6 +277,11 @@
+         device=device,
+         dtype=model_dtype,
+     )
++    model.require_high_level_subtask = bool(high_level_subtask_conditioning)
++    model.subtask_max_tokens = int(subtask_max_tokens)
++    if model.code_expert is not None:
++        model.code_expert.require_high_level_subtask = model.require_high_level_subtask
++        model.code_expert.subtask_max_tokens = model.subtask_max_tokens
+     model.loss_lambda_video = loss_lambda_video
+     model.loss_lambda_action = loss_lambda_action
+     model.loss_lambda_code = loss_lambda_code
+--- a/src/agenticwam/models/experts/code_expert.py
++++ b/src/agenticwam/models/experts/code_expert.py
+@@ -1,23 +1,10 @@
+-"""Coding Expert for the tri-modal MoT-WAM (Code | Video | Action).
+-
+-The Coding Expert is a *co-equal* MoT expert: it owns a 30-layer stack of
+-`CodeBlock`s that participate in the per-layer joint self-attention with the
+-video and action experts (modality order: code -> video -> action). It generates
+-executable policy code autoregressively (teacher-forced CE).
+-
+-Design (see plan): build the body from Qwen3-VL-2B-Instruct's 28 decoder layers
+-+ 2 identity-initialized layers = 30, each wrapped to the MoT block interface
+-(`norm1`, `self_attn.{q,k,v,o,norm_q,norm_k}`, `num_heads`, `norm2`, `ffn`,
+-`gate`, `modulation`). The joint-attention q/k/v are *new* Wan-style projections
+-(2048 -> 24*128=3072); Qwen's RMSNorms and SwiGLU MLP are reused. Code uses
+-*neutral* modulation (shift=0, scale=0, gate=1) because it is autoregressive, not
+-diffusion-noised. A tiny offline `MockCodeExpert` exposes the same interface for
+-CPU smoke tests.
+-
+-Interface note for future joint denoising: `pre_dit`/`post_dit` return
+-hidden-state tokens + logits the same way regardless of how code is produced, so
+-a masked/diffusion code path can replace AR generation without changing the MoT
+-call sites.
++"""Code Expert for the video/code/action MoT.
++
++The default recipe uses an SDAR body and joint masked-token denoising; AR and
++blockdiff remain available for the baseline. CaP-subtask adds a frozen planner's
++subtask to the prompt, alongside the instruction/helper library. Conditioning
++tokens are never CE targets; only the code/EOS region is supervised. The visual
++prefix is attached by AgenticWAMCosmos. A tiny mock expert supports CPU tests.
+ """
+ from __future__ import annotations
+ 
+@@ -28,6 +15,7 @@
+ import torch.nn.functional as F
+ 
+ from agenticwam.utils.logging_config import get_logger
++from agenticwam.coding.subtask_conditioning import condition_code_prompt, SubtaskConditionError
+ 
+ from .wan_video_dit import GateModule, RMSNorm, SelfAttention, precompute_freqs_cis
+ 
+@@ -287,7 +275,8 @@
+         for m in (self.embed_tokens, self.lm_head, self.final_norm):
+             m.requires_grad_(req)
+ 
+-    def build_code_batch(self, instructions, codes, device, max_length: Optional[int] = None):
++    def build_code_batch(self, instructions, codes, device, max_length: Optional[int] = None,
++                         high_level_subtasks=None):
+         """Tokenize (instruction prompt + policy code) into input_ids/labels for
+         teacher-forced CE. Prompt tokens and padding are masked to -100. Works with
+         a HF tokenizer or the offline ByteTokenizer."""
+@@ -299,6 +288,10 @@
+         if codes is None:
+             raise ValueError("`codes` (policy_code) required to build the code batch.")
+         bsz = len(codes)
++        if high_level_subtasks is None or isinstance(high_level_subtasks, str):
++            high_level_subtasks = [high_level_subtasks] * bsz
++        if len(high_level_subtasks) != bsz:
++            raise SubtaskConditionError("Subtask batch length must match the code batch")
+         instructions = instructions if instructions is not None else [""] * bsz
+         pad_id = getattr(self.tokenizer, "pad_token_id", None)
+         if pad_id is None:
+@@ -343,6 +336,12 @@
+                 if not ptxt.startswith("# Instruction:"):
+                     ptxt = f"# Instruction: {ptxt}\n"
+                 p_ids = _enc(ptxt)
++            ptxt = "" if _noinstr else ptxt
++            ptxt = condition_code_prompt(
++                ptxt, high_level_subtasks[i], tokenizer=self.tokenizer,
++                max_subtask_tokens=getattr(self, "subtask_max_tokens", 128),
++                required=getattr(self, "require_high_level_subtask", False))
++            p_ids = _enc(ptxt)
+             c_ids = _enc(codes[i])
+             if _cv > 0 and c_ids:
+                 # program + terminal EOS, then EOS-filled to exactly _cv. Truncate to _cv-1 first so
+@@ -360,6 +359,10 @@
+                 self._canvas_trunc_logged = True
+                 print(f"[code-canvas] WARNING prompt {len(p_ids)} + canvas {_cv} > max_code_tokens "
+                       f"{max_length}: the canvas is being CUT. Raise max_code_tokens.", flush=True)
++            if high_level_subtasks[i] is not None and len(p_ids) + len(c_ids) > max_length:
++                raise SubtaskConditionError(
++                    f"Conditioned prompt ({len(p_ids)}) + code ({len(c_ids)}) exceeds "
++                    f"max_code_tokens={max_length}; refusing silently truncated training labels")
+             ids = (p_ids + c_ids)[:max_length]
+             lab = ([-100] * len(p_ids) + c_ids)[:max_length]
+             if _cv == 0 and _pew > 0 and c_ids and eos_id is not None and len(ids) < max_length:
+--- a/src/tau0_proposal/runtime.py
++++ b/src/tau0_proposal/runtime.py
+@@ -51,6 +51,8 @@
+ 
+ class Proposal:
+     def __init__(self, model_path, adapter=None, device="cuda:0", max_new_tokens=512, attention="eager"):
++        self.model_path = str(Path(model_path).resolve())
++        self.adapter_path = str(Path(adapter).resolve()) if adapter else None
+         self.model, self.processor = load_model(model_path, adapter, device, attention)
+         self.model.eval()
+         self.max_new_tokens = max_new_tokens
+@@ -62,4 +64,5 @@
+         output = self.model.generate(**inputs, max_new_tokens=self.max_new_tokens, do_sample=False)
+         text = decode(self.processor, output[0, inputs.input_ids.shape[1]:])
+         parsed = parse_output(text, row.get("task_type", "full_qa"))
+-        return {"prediction": text, **parsed, "next_memory": update_memory(row.get("memory", ""), parsed)}
++        return {"prediction": text, **parsed, "next_memory": update_memory(row.get("memory", ""), parsed),
++                "planner_model": self.model_path, "planner_adapter": self.adapter_path}
+--- a/src/tau0_proposal/serve.py
++++ b/src/tau0_proposal/serve.py
+@@ -33,7 +33,8 @@
+ 
+     @app.get("/health")
+     def health():
+-        return {"ready": True}
++        return {"ready": True, "model": getattr(policy, "model_path", None),
++                "adapter": getattr(policy, "adapter_path", None), "contract": "tau0_proposal_v1"}
+ 
+     @app.post("/predict")
+     def predict(request: Request):
+--- /dev/null
++++ b/NOTICE.txt
+@@ -0,0 +1,12 @@
++This project derives its AgenticWAM implementation from:
++  /home/yilianli/project/agentic-wam
++  Git revision 275818e5787d59012eba4c43504342f1201ad25b
++The original BSD-2-Clause license is retained as LICENSE.
++
++src/tau0_proposal is extracted from:
++  /home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal
++The original license is retained at requirements/proposal/TAU0_LICENSE.
++Proposal requirements and the bundled proposal examples also come from that project.
++Source paths, revisions and initial hashes are recorded in SOURCE_MANIFEST.json.
++
++No model weights or training demonstrations are distributed in this directory.
+--- /dev/null
++++ b/README.txt
+@@ -0,0 +1,152 @@
++CaP-subtask：τ0 高层子任务条件化的 AgenticWAM
++日期：2026-11-24
++
++已经实现的模型形式：
++  τ0 Proposal(当前 head/left/right RGB, 总任务, 上一次规划记忆)
++      -> 当前 subtask、next_memory
++  Code Expert(当前视觉前缀, 总任务指令, helper library, τ0 subtask)
++      -> 当前 CaP stage
++  Video/Action experts 继续通过 MoT 注意力读取代码分支，生成未来视频与动作。
++
++这是冻结规划器 + 条件化低层模型的组合。新增条件是文本 token，不另加未训练的投影层，
++不替换总任务指令，不把 τ0 的 think/memory 当作代码标签。τ0 不接收低层损失梯度。
++需要用真实 τ0 输出缓存微调低层，才能得到新的训练权重；现有 hybrid.pt 仅作为初始化。
++本次未进行正式微调、未下载 τ0 Proposal 9B 权重，也未宣称已取得新模型性能。
++
++本目录继承了运行所需的 AgenticWAM src/configs/scripts/robotwin/deploy/utils，保留原许可证。
++原 /home/yilianli/project/agentic-wam 和 tau-0-vla 的源码未修改。
++SOURCE_MANIFEST.json 记录复制来源及初始 SHA-256；CHANGE_MANIFEST.json、changes.patch、CHANGES.txt
++记录本次功能新增及相对来源的修改。src/tau0_proposal 是单独提取的 τ0 高层 Proposal，
++来自 tau-0-vla/src/tau0_vla/high_level/proposal；不包含 τ0 的低层 VLA 或 world model。
++τ0 原许可证保留在 requirements/proposal/TAU0_LICENSE。
++
++1. 环境与模型
++
++低层沿用已安装的 agenticwam 环境，通过 PYTHONPATH 优先导入本目录的修改版本：
++  source /home/yilianli/project/CaP-subtask/scripts/activate_local.sh
++  python -c "import agenticwam; print(agenticwam.__file__)"
++应显示 /home/yilianli/project/CaP-subtask/src/agenticwam/__init__.py。
++无需重新在共享环境安装同名 agenticwam 包。
++
++τ0 Proposal 依赖 Transformers 5.5.4，低层依赖 4.x，使用单独 Python 3.12 环境。
++以下是按需执行的配置命令（本次未执行安装或下载）：
++  /home/yilianli/project/tau-0-vla/.env-model/bin/python -m venv /home/yilianli/project/CaP-subtask/.venv-proposal
++  .venv-proposal/bin/python -m pip install -r requirements/proposal/requirements.txt
++  .venv-proposal/bin/hf download sii-research/tau-0-vla-proposal --local-dir /path/to/tau0-proposal
++
++启动冻结规划器，默认使用 GPU 1：
++  TAU0_PROPOSAL_WEIGHTS=/path/to/tau0-proposal bash scripts/serve_tau0_proposal.sh
++可设置 PROPOSAL_PYTHON、PROPOSAL_DEVICE、PROPOSAL_PORT，或通过脚本后续参数添加 --adapter。
++configs/subtask/planner.yaml 控制低层请求地址、超时和 full_qa/subtask_only 模式。
++full_qa 的 next_memory 在每次重规划后传回 τ0；每个新回合清空为 (empty)。
++
++离线验证 τ0 本身（在 Proposal 环境中）：
++  PYTHONPATH="$PWD/src" .venv-proposal/bin/python -m tau0_proposal.infer \
++    --model /path/to/tau0-proposal --input examples/proposal.jsonl --output /tmp/tau0-example.jsonl
++examples/proposal/ 三张图及 tau0_proposal_output.json 是上游提供的真实接口示例，
++不是本次新模型的推理/评测结果。
++
++2. 准备训练子任务缓存
++
++本版本默认从 click_alarmclock 开始；可用下列命令扩展到多个任务或全部 50 个任务：
++  python scripts/prepare_subtask_data_config.py --tasks click_alarmclock,stack_blocks_two --overwrite
++  python scripts/prepare_subtask_data_config.py --tasks all --overwrite
++
++每个任务的数据需是现有 codegen/sim 导出的 LeRobot v2.x 数据，以及原有 stage 切片/文本缓存。
++在 configs/paths/local.yaml 配置真实路径：
++  robotwin_cap          含 <task>/lerobot/robotwin2.0、_text_cache/<task> 的根目录
++  robotwin_cap_slices   含 <task>/raw/slices 的根目录
++  robotwin_subtasks     τ0 输出缓存的根目录；默认 data_local/tau0_subtasks，可用 CAP_SUBTASK_CACHE_ROOT 覆盖
++  robotwin_dataset_stats 归一化统计；目前复用发布的 dataset_stats.json
++
++对每个任务执行以下三个步骤，例子中的 /data 请换为实际路径：
++  python scripts/export_tau0_observations.py \
++    --dataset /data/cap/click_alarmclock/lerobot/robotwin2.0 \
++    --output data_local/observations/click_alarmclock --stride 24
++  python scripts/predict_tau0_subtasks.py \
++    --input data_local/observations/click_alarmclock/observations.jsonl \
++    --output data_local/observations/click_alarmclock/predictions.jsonl
++  python scripts/build_subtask_cache.py \
++    --observations data_local/observations/click_alarmclock/observations.jsonl \
++    --predictions data_local/observations/click_alarmclock/predictions.jsonl \
++    --output data_local/tau0_subtasks/click_alarmclock/subtask_cache.json
++
++export 默认读取全部 episode，也可 --episodes /path/to/episodes_train.json 指定原始 episode 索引。
++每个区间只把起始帧的三相机图像送给 τ0，不向它展示未来帧、GT stage 或动作标签。
++predict 按 episode 和帧顺序请求，记忆只来自此前的规划输出。
++每个输出文件使用新路径；缓存构建器拒绝覆盖、ID 不匹配、无效输出、区间缺失/重叠和元数据变化。
++
++缓存格式：
++  schema_version: 1
++  provenance: 观测清单/预测清单 SHA-256，以及规划器模型位置
++  datasets:
++    - root: 数据集绝对路径
++      metadata_sha256: LeRobot info/episodes/tasks 元数据摘要
++      episodes:
++        "5":
++          length: 原始 episode 的总帧数
++          segments:
++            - start: 0
++              end: 24
++              subtask: Pick up the cup with the right arm.
++              proposal_id: 与观测/预测相同的唯一 ID
++
++区间为 [start,end)，每个缓存 episode 必须从 0 连续覆盖到 length。
++采用数据集/原始 episode/frame 键，而不是训练索引，避免选择、重排 episode 或读取重试后错位。
++更换数据集路径/元数据后应重建缓存。
++
++3. 训练新模型
++
++  source scripts/activate_local.sh
++  DRY_RUN=1 bash scripts/train_cap_subtask.sh wandb.enabled=false
++  bash scripts/train_cap_subtask.sh wandb.enabled=false
++
++默认两卡、每卡 batch_size=1、梯度累积2；可通过 NPROC 与 Hydra 参数调整。
++预检查会检查所有已用路径、子任务缓存的元数据绑定和所选 episode 覆盖率。
++当前训练数据和子任务缓存未提供，因此完整 preflight 会明确失败；这是待准备的输入，不是成功训练记录。
++只查看启动命令、不检查数据：
++  python scripts/launch_train.py --task cap_subtask_robotwin --nproc 2 --dry-run paths=local
++
++配置：configs/model/cap_subtask.yaml，configs/robotwin/task/cap_subtask_robotwin.yaml，
++      configs/robotwin/data/cap_subtask.yaml。
++训练保留三路联合损失；新增条件只进入 Code Expert 的 prompt，标签仍为原来的代码/EOS。
++max_code_tokens 从512扩到768，代码 canvas 保持124；subtask 单独限制为128个 SDAR token。
++超长 prompt/代码会报错，避免静默截断。该版本支持 joint 目标，code_memory=false。
++原 fast_joint 推理覆盖尚未接入新条件，启用它时会明确报错；请使用标准 joint 路径。
++输出：runs/cap_subtask_robotwin/<run_id>/config.yaml、dataset_stats.json、checkpoints/weights/step_*.pt。
++新权重保存 tau0_subtask_text_v1 条件元数据；加载时若漏用条件模型配置会拒绝。
++
++4. 推理与评估
++
++单次纯模型推理，不控制机器人：
++  python scripts/infer_cap_subtask.py --input /path/to/request.json \
++    --ckpt /path/to/new_subtask_checkpoint.pt --output /tmp/cap-subtask-output.json
++输入格式见 examples/inference_request.template.json：task、instruction、三路图像路径、14维关节状态。
++在线调用 τ0；也可 --proposal-json /path/to/saved_tau0_output.json 复用同一观测的有效输出，
++此时输入和 Proposal 输出都必须携带一致的 id。示例中的零关节状态只是结构占位。
++输出包含 high_level_subtask、code、action_chunk、action_type=qpos_abs。
++
++RoboTwin 闭环评估，默认 WAM 动作执行模式，τ0 条件照常进入 Code Expert：
++  bash scripts/eval_cap_subtask.sh --ckpt /path/to/new_subtask_checkpoint.pt \
++    --tasks click_alarmclock --plan smoke --protocols clean --episodes 1 --shards 1
++  同一命令添加 --dry-run，仅打印计划；不会启动模型或请求服务。
++可设置 EXECUTION_MODE=hybrid 改为 CaP stage 执行 + WAM 回退。
++Hybrid 还依赖原有 Molmo/SAM3/GraspNet，需另外安排 GPU/服务资源；默认动作执行模式只需要 τ0 和低层模型。
++评测没有默认权重路径，必须显式提供 --ckpt，避免误把原 hybrid.pt 当作新训练权重。
++policy_name 使用 cap_subtask_policy，与原 agenticwam_policy 分开。
++
++评估输出沿用 evaluate_results/robotwin*/，并新增 episodeN_subtasks.jsonl：
++每次重规划的 subtask、memory_in、next_memory、规划器模型和请求延迟。
++代码生成与动作/Hybrid 仲裁日志仍保留。run_meta.json 记录 subtask_conditioning=true。
++模拟器、资产、OIDN 和感知环境继续引用原 agentic-wam 的已部署依赖，未重复复制大型资源。
++
++5. 已完成验证与范围
++
++  python -m unittest discover -s tests -v
++十一项 CPU/本地 HTTP 测试覆盖：模型工厂条件设置、检查点条件元数据与加载约束；
++条件影响真实 CodeBlock logits 与反向梯度；
++条件不进入 CE、joint mask 不遮条件；训练/实际 joint 推理 prompt 一致；
++缺条件与超长输入拒绝；原始 episode/帧索引与读取重试；缓存错位/失效检查；
++三相机真实视频当前帧导出；τ0 HTTP payload、记忆传递/重置与无效输出拒绝。
++此外完成 Python 编译、shell语法、环境依赖检查、训练/评测配置 dry-run。
++未运行完整9B τ0 + 大模型联合推理、未进行正式训练，也未给出新模型的任务成功率。
+--- /dev/null
++++ b/configs/model/cap_subtask.yaml
+@@ -0,0 +1,12 @@
++defaults:
++  - agenticwam_cosmos
++  - _self_
++
++# Frozen Tau0 Proposal -> additional prompt-side tokens for the Code Expert.
++high_level_subtask_conditioning: true
++subtask_max_tokens: 128
++code_objective: joint
++code_memory: false
++use_code_expert: true
++# Expanded PROMPT budget; the generated code canvas stays 124 tokens.
++max_code_tokens: 768
+--- /dev/null
++++ b/configs/robotwin/data/cap_subtask.yaml
+@@ -0,0 +1,134 @@
++# Derived from robotwin_cap.yaml; adds episode-aligned Tau0 conditioning.
++train:
++  _target_: agenticwam.datasets.lerobot.deadline_dataset.DeadlineDataset
++  seconds: 60.0
++  max_retries: 2
++  dataset:
++    _target_: torch.utils.data.ConcatDataset
++    datasets:
++    - _target_: agenticwam.datasets.lerobot.robot_video_dataset.RobotVideoDataset
++      shape_meta:
++        images:
++        - key: cam_high
++          raw_shape:
++          - 3
++          - 480
++          - 640
++          shape:
++          - 3
++          - 224
++          - 320
++        - key: cam_left_wrist
++          raw_shape:
++          - 3
++          - 480
++          - 640
++          shape:
++          - 3
++          - 224
++          - 320
++        - key: cam_right_wrist
++          raw_shape:
++          - 3
++          - 480
++          - 640
++          shape:
++          - 3
++          - 224
++          - 320
++        action:
++        - key: default
++          raw_shape: 14
++          shape: 14
++        state:
++        - key: default
++          raw_shape: 14
++          shape: 14
++      num_frames: 33
++      global_sample_stride: 1
++      action_video_freq_ratio: 4
++      video_size:
++      - 224
++      - 320
++      camera_key: null
++      val_set_proportion: 0.0
++      is_training_set: true
++      pretrained_norm_stats: ${paths.robotwin_dataset_stats}
++      skip_padding_as_possible: false
++      concat_multi_camera: multiview
++      use_policy_code: true
++      policy_code_cache_dir: null
++      policy_code_coverage: 1.0
++      code_slices: true
++      code_slices_no_history: true
++      processor:
++        _target_: agenticwam.datasets.lerobot.processors.agenticwam_processor.AgenticWAMProcessor
++        shape_meta:
++          images:
++          - key: cam_high
++            raw_shape:
++            - 3
++            - 480
++            - 640
++            shape:
++            - 3
++            - 224
++            - 320
++          - key: cam_left_wrist
++            raw_shape:
++            - 3
++            - 480
++            - 640
++            shape:
++            - 3
++            - 224
++            - 320
++          - key: cam_right_wrist
++            raw_shape:
++            - 3
++            - 480
++            - 640
++            shape:
++            - 3
++            - 224
++            - 320
++          action:
++          - key: default
++            raw_shape: 14
++            shape: 14
++          state:
++          - key: default
++            raw_shape: 14
++            shape: 14
++        num_obs_steps: 33
++        num_output_cameras: 3
++        action_output_dim: 14
++        proprio_output_dim: 14
++        action_state_transforms: []
++        use_stepwise_action_norm: false
++        norm_default_mode: q01/q99
++        norm_exception_mode: null
++        action_state_merger:
++          _target_: agenticwam.datasets.lerobot.transforms.action_state_merger.ConcatLeftAlign
++        train_transforms:
++        - _target_: agenticwam.datasets.lerobot.transforms.image.ToTensor
++        - _target_: torchvision.transforms.Resize
++          size:
++          - 224
++          - 320
++        val_transforms:
++        - _target_: agenticwam.datasets.lerobot.transforms.image.ToTensor
++        - _target_: torchvision.transforms.Resize
++          size:
++          - 224
++          - 320
++      context_len: 128
++      dataset_dirs:
++      - ${paths.robotwin_cap}/click_alarmclock/lerobot/robotwin2.0
++      episode_indices: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/episodes_train.json
++      code_slices_cache_dir: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/slices_ep
++      cycle_cache_path: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/cycle_by_idx.pt
++      cosmos_text_cache_dir: ${paths.robotwin_cap}/_text_cache/click_alarmclock
++      subtask_cache_path: ${paths.robotwin_subtasks}/click_alarmclock/subtask_cache.json
++      require_high_level_subtask: true
++val: null
+--- /dev/null
++++ b/configs/robotwin/eval/cap_subtask.yaml
+@@ -0,0 +1,21 @@
++mode: hybrid
++policy_name: cap_subtask_policy
++subtask_conditioning: true
++# Supply --ckpt for a newly trained checkpoint; no silent baseline default.
++checkpoint: null
++eval_task: cap_subtask_robotwin
++dataset_stats: ${dataset_stats}
++code_model: ${code_model}
++action_space: ""
++action_dim: 14
++proprio_dim: 14
++task_assets_dir: ${repo}/configs/robotwin/tasks_indep
++instruction_type: seen
++num_inference_steps: 40
++replan_steps: 24
++code_tokens: 124
++no_history: true
++image_crop: 0.95
++decode:
++  confidence_threshold: 0.5
++  max_reveal_per_step: 4
+--- /dev/null
++++ b/configs/robotwin/task/cap_subtask_robotwin.yaml
+@@ -0,0 +1,25 @@
++# @package _global_
++defaults:
++  - override /data: cap_subtask
++  - override /model: cap_subtask
++  - _self_
++
++batch_size: 1
++num_workers: 4
++gradient_accumulation_steps: 2
++mixed_precision: bf16
++model:
++  action_dim: 14
++  proprio_dim: 14
++  code_canvas: 124
++  infer_code_tokens: 124
++learning_rate: 1e-4
++weight_decay: 1e-2
++lr_scheduler_type: cosine
++num_epochs: 1
++max_steps: 15000
++save_every: 1000
++log_every: 20
++eval_every: 999999
++resume: null
++foundation_ckpt: ${paths.robotwin_hybrid_init_ckpt}
+--- /dev/null
++++ b/configs/subtask/planner.yaml
+@@ -0,0 +1,4 @@
++# Read by offline prediction and online policy; the HTTP service owns Qwen3.5.
++url: http://127.0.0.1:10089/predict
++timeout_s: 120
++task_type: full_qa
+--- /dev/null
++++ b/examples/inference_request.template.json
+@@ -0,0 +1,26 @@
++{
++  "task": "click_alarmclock",
++  "instruction": "Press the button on the alarm clock.",
++  "images": {
++    "head": "/path/to/head.png",
++    "left": "/path/to/left_wrist.png",
++    "right": "/path/to/right_wrist.png"
++  },
++  "state": [
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0,
++    0.0
++  ],
++  "id": "your_observation_id"
++}
+--- /dev/null
++++ b/examples/proposal.jsonl
+@@ -0,0 +1 @@
++{"id": "microwave_close", "task_type": "full_qa", "question": "Current phase: Close the microwave door.\nCurrent memory: I have completed tablecloth spreading and price tag organization, and I am positioning my arms to close the microwave.\nBased on the current visual state, predict the next sub-action and update the memory.", "memory": "I have completed tablecloth spreading and price tag organization, and I am positioning my arms to close the microwave.", "images": {"head": "proposal/head.jpg", "left": "proposal/left.jpg", "right": "proposal/right.jpg"}}
+--- /dev/null
++++ b/examples/tau0_proposal_output.json
+@@ -0,0 +1,9 @@
++{
++  "id": "microwave_close",
++  "prediction": "<|think|>The robot is positioned in front of the open microwave. Both arms are currently retracted and not yet interacting with the door.<|/think|><|memory|>I have completed tablecloth spreading and price tag organization, and I am positioning my arms to close the microwave.<|/memory|><|subtask|>Close the microwave door on the table with the left arm.<|/subtask|>",
++  "think": "The robot is positioned in front of the open microwave. Both arms are currently retracted and not yet interacting with the door.",
++  "memory_out": "I have completed tablecloth spreading and price tag organization, and I am positioning my arms to close the microwave.",
++  "subtask": "Close the microwave door on the table with the left arm.",
++  "format_valid": true,
++  "next_memory": "I have completed tablecloth spreading and price tag organization, and I am positioning my arms to close the microwave."
++}
+--- /dev/null
++++ b/requirements/proposal/TAU0_LICENSE
+@@ -0,0 +1,202 @@
++
++                                 Apache License
++                           Version 2.0, January 2004
++                        http://www.apache.org/licenses/
++
++   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
++
++   1. Definitions.
++
++      "License" shall mean the terms and conditions for use, reproduction,
++      and distribution as defined by Sections 1 through 9 of this document.
++
++      "Licensor" shall mean the copyright owner or entity authorized by
++      the copyright owner that is granting the License.
++
++      "Legal Entity" shall mean the union of the acting entity and all
++      other entities that control, are controlled by, or are under common
++      control with that entity. For the purposes of this definition,
++      "control" means (i) the power, direct or indirect, to cause the
++      direction or management of such entity, whether by contract or
++      otherwise, or (ii) ownership of fifty percent (50%) or more of the
++      outstanding shares, or (iii) beneficial ownership of such entity.
++
++      "You" (or "Your") shall mean an individual or Legal Entity
++      exercising permissions granted by this License.
++
++      "Source" form shall mean the preferred form for making modifications,
++      including but not limited to software source code, documentation
++      source, and configuration files.
++
++      "Object" form shall mean any form resulting from mechanical
++      transformation or translation of a Source form, including but
++      not limited to compiled object code, generated documentation,
++      and conversions to other media types.
++
++      "Work" shall mean the work of authorship, whether in Source or
++      Object form, made available under the License, as indicated by a
++      copyright notice that is included in or attached to the work
++      (an example is provided in the Appendix below).
++
++      "Derivative Works" shall mean any work, whether in Source or Object
++      form, that is based on (or derived from) the Work and for which the
++      editorial revisions, annotations, elaborations, or other modifications
++      represent, as a whole, an original work of authorship. For the purposes
++      of this License, Derivative Works shall not include works that remain
++      separable from, or merely link (or bind by name) to the interfaces of,
++      the Work and Derivative Works thereof.
++
++      "Contribution" shall mean any work of authorship, including
++      the original version of the Work and any modifications or additions
++      to that Work or Derivative Works thereof, that is intentionally
++      submitted to Licensor for inclusion in the Work by the copyright owner
++      or by an individual or Legal Entity authorized to submit on behalf of
++      the copyright owner. For the purposes of this definition, "submitted"
++      means any form of electronic, verbal, or written communication sent
++      to the Licensor or its representatives, including but not limited to
++      communication on electronic mailing lists, source code control systems,
++      and issue tracking systems that are managed by, or on behalf of, the
++      Licensor for the purpose of discussing and improving the Work, but
++      excluding communication that is conspicuously marked or otherwise
++      designated in writing by the copyright owner as "Not a Contribution."
++
++      "Contributor" shall mean Licensor and any individual or Legal Entity
++      on behalf of whom a Contribution has been received by Licensor and
++      subsequently incorporated within the Work.
++
++   2. Grant of Copyright License. Subject to the terms and conditions of
++      this License, each Contributor hereby grants to You a perpetual,
++      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
++      copyright license to reproduce, prepare Derivative Works of,
++      publicly display, publicly perform, sublicense, and distribute the
++      Work and such Derivative Works in Source or Object form.
++
++   3. Grant of Patent License. Subject to the terms and conditions of
++      this License, each Contributor hereby grants to You a perpetual,
++      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
++      (except as stated in this section) patent license to make, have made,
++      use, offer to sell, sell, import, and otherwise transfer the Work,
++      where such license applies only to those patent claims licensable
++      by such Contributor that are necessarily infringed by their
++      Contribution(s) alone or by combination of their Contribution(s)
++      with the Work to which such Contribution(s) was submitted. If You
++      institute patent litigation against any entity (including a
++      cross-claim or counterclaim in a lawsuit) alleging that the Work
++      or a Contribution incorporated within the Work constitutes direct
++      or contributory patent infringement, then any patent licenses
++      granted to You under this License for that Work shall terminate
++      as of the date such litigation is filed.
++
++   4. Redistribution. You may reproduce and distribute copies of the
++      Work or Derivative Works thereof in any medium, with or without
++      modifications, and in Source or Object form, provided that You
++      meet the following conditions:
++
++      (a) You must give any other recipients of the Work or
++          Derivative Works a copy of this License; and
++
++      (b) You must cause any modified files to carry prominent notices
++          stating that You changed the files; and
++
++      (c) You must retain, in the Source form of any Derivative Works
++          that You distribute, all copyright, patent, trademark, and
++          attribution notices from the Source form of the Work,
++          excluding those notices that do not pertain to any part of
++          the Derivative Works; and
++
++      (d) If the Work includes a "NOTICE" text file as part of its
++          distribution, then any Derivative Works that You distribute must
++          include a readable copy of the attribution notices contained
++          within such NOTICE file, excluding those notices that do not
++          pertain to any part of the Derivative Works, in at least one
++          of the following places: within a NOTICE text file distributed
++          as part of the Derivative Works; within the Source form or
++          documentation, if provided along with the Derivative Works; or,
++          within a display generated by the Derivative Works, if and
++          wherever such third-party notices normally appear. The contents
++          of the NOTICE file are for informational purposes only and
++          do not modify the License. You may add Your own attribution
++          notices within Derivative Works that You distribute, alongside
++          or as an addendum to the NOTICE text from the Work, provided
++          that such additional attribution notices cannot be construed
++          as modifying the License.
++
++      You may add Your own copyright statement to Your modifications and
++      may provide additional or different license terms and conditions
++      for use, reproduction, or distribution of Your modifications, or
++      for any such Derivative Works as a whole, provided Your use,
++      reproduction, and distribution of the Work otherwise complies with
++      the conditions stated in this License.
++
++   5. Submission of Contributions. Unless You explicitly state otherwise,
++      any Contribution intentionally submitted for inclusion in the Work
++      by You to the Licensor shall be under the terms and conditions of
++      this License, without any additional terms or conditions.
++      Notwithstanding the above, nothing herein shall supersede or modify
++      the terms of any separate license agreement you may have executed
++      with Licensor regarding such Contributions.
++
++   6. Trademarks. This License does not grant permission to use the trade
++      names, trademarks, service marks, or product names of the Licensor,
++      except as required for reasonable and customary use in describing the
++      origin of the Work and reproducing the content of the NOTICE file.
++
++   7. Disclaimer of Warranty. Unless required by applicable law or
++      agreed to in writing, Licensor provides the Work (and each
++      Contributor provides its Contributions) on an "AS IS" BASIS,
++      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
++      implied, including, without limitation, any warranties or conditions
++      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
++      PARTICULAR PURPOSE. You are solely responsible for determining the
++      appropriateness of using or redistributing the Work and assume any
++      risks associated with Your exercise of permissions under this License.
++
++   8. Limitation of Liability. In no event and under no legal theory,
++      whether in tort (including negligence), contract, or otherwise,
++      unless required by applicable law (such as deliberate and grossly
++      negligent acts) or agreed to in writing, shall any Contributor be
++      liable to You for damages, including any direct, indirect, special,
++      incidental, or consequential damages of any character arising as a
++      result of this License or out of the use or inability to use the
++      Work (including but not limited to damages for loss of goodwill,
++      work stoppage, computer failure or malfunction, or any and all
++      other commercial damages or losses), even if such Contributor
++      has been advised of the possibility of such damages.
++
++   9. Accepting Warranty or Additional Liability. While redistributing
++      the Work or Derivative Works thereof, You may choose to offer,
++      and charge a fee for, acceptance of support, warranty, indemnity,
++      or other liability obligations and/or rights consistent with this
++      License. However, in accepting such obligations, You may act only
++      on Your own behalf and on Your sole responsibility, not on behalf
++      of any other Contributor, and only if You agree to indemnify,
++      defend, and hold each Contributor harmless for any liability
++      incurred by, or claims asserted against, such Contributor by reason
++      of your accepting any such warranty or additional liability.
++
++   END OF TERMS AND CONDITIONS
++
++   APPENDIX: How to apply the Apache License to your work.
++
++      To apply the Apache License to your work, attach the following
++      boilerplate notice, with the fields enclosed by brackets "[]"
++      replaced with your own identifying information. (Don't include
++      the brackets!)  The text should be enclosed in the appropriate
++      comment syntax for the file format. We also recommend that a
++      file or class name and description of purpose be included on the
++      same "printed page" as the copyright notice for easier
++      identification within third-party archives.
++
++   Copyright [yyyy] [name of copyright owner]
++
++   Licensed under the Apache License, Version 2.0 (the "License");
++   you may not use this file except in compliance with the License.
++   You may obtain a copy of the License at
++
++       http://www.apache.org/licenses/LICENSE-2.0
++
++   Unless required by applicable law or agreed to in writing, software
++   distributed under the License is distributed on an "AS IS" BASIS,
++   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++   See the License for the specific language governing permissions and
++   limitations under the License.
+--- /dev/null
++++ b/scripts/build_subtask_cache.py
+@@ -0,0 +1,18 @@
++#!/usr/bin/env python3
++"""Join observation metadata and real Tau0 outputs; reject incomplete frame coverage."""
++import argparse
++from agenticwam.coding.subtask_data import build_cache
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--observations", required=True)
++    parser.add_argument("--predictions", required=True)
++    parser.add_argument("--output", required=True)
++    args = parser.parse_args()
++    doc = build_cache(args.observations, args.predictions, args.output)
++    print(f"Wrote {args.output}; datasets={len(doc['datasets'])}")
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ b/scripts/eval_cap_subtask.sh
+@@ -0,0 +1,7 @@
++#!/usr/bin/env bash
++set -euo pipefail
++ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++source "$ROOT/scripts/activate_local.sh"
++export CAP_SUBTASK_PLANNER_CONFIG="${CAP_SUBTASK_PLANNER_CONFIG:-$ROOT/configs/subtask/planner.yaml}"
++exec python "$ROOT/scripts/eval_robotwin_release.py" "${EXECUTION_MODE:-wam}" \
++  --config cap_subtask --gpus 0 --vis-gpu "${VIS_GPU:-1}" "$@" --launch-args --extra paths=local
+--- /dev/null
++++ b/scripts/export_tau0_observations.py
+@@ -0,0 +1,21 @@
++#!/usr/bin/env python3
++"""Extract current three-camera observations from a RoboTwin LeRobot dataset."""
++import argparse
++import json
++from agenticwam.coding.subtask_data import export_observations
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--dataset", required=True)
++    parser.add_argument("--output", required=True)
++    parser.add_argument("--stride", type=int, default=24)
++    parser.add_argument("--episodes", help="optional JSON list of original episode indices")
++    args = parser.parse_args()
++    selected = json.load(open(args.episodes)) if args.episodes else None
++    path, count = export_observations(args.dataset, args.output, stride=args.stride, episodes=selected)
++    print(f"Wrote {count} observations: {path}")
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ b/scripts/infer_cap_subtask.py
+@@ -0,0 +1,69 @@
++#!/usr/bin/env python3
++"""One observation -> Tau0 subtask -> joint AgenticWAM inference (no robot motion)."""
++import argparse
++import json
++import os
++import sys
++from pathlib import Path
++
++import numpy as np
++from PIL import Image
++
++ROOT = Path(__file__).resolve().parents[1]
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--input", required=True, type=Path)
++    parser.add_argument("--output", required=True, type=Path)
++    parser.add_argument("--ckpt", required=True)
++    parser.add_argument("--dataset-stats", default="/home/yilianli/project/models/agentic-wam-robotwin-release/dataset_stats.json")
++    parser.add_argument("--proposal-json", type=Path, help="use a saved, valid Tau0 output instead of HTTP")
++    parser.add_argument("--planner-config", default=str(ROOT / "configs/subtask/planner.yaml"))
++    parser.add_argument("--device", default="cuda:0")
++    parser.add_argument("--steps", type=int, default=40)
++    args = parser.parse_args()
++    if args.output.exists():
++        raise FileExistsError(args.output)
++    if not Path(args.ckpt).is_file():
++        raise FileNotFoundError(args.ckpt)
++    row = json.loads(args.input.read_text())
++    state = np.asarray(row["state"], dtype=np.float32)
++    if state.shape != (14,) or not np.isfinite(state).all():
++        raise ValueError("state must contain 14 finite absolute joint positions")
++    observation = {"observation": {}, "joint_action": {"vector": state}}
++    for view, camera in {"head": "head_camera", "left": "left_camera", "right": "right_camera"}.items():
++        path = args.input.resolve().parent / row["images"][view]
++        with Image.open(path) as image:
++            observation["observation"][camera] = {"rgb": np.asarray(image.convert("RGB"))}
++    if args.proposal_json:
++        from agenticwam.coding.subtask_conditioning import normalize_subtask
++        proposal = json.loads(args.proposal_json.read_text())
++        if not row.get("id") or proposal.get("id") != row["id"]:
++            raise ValueError("Saved proposal id must match the input observation id")
++        if proposal.get("format_valid") is not True:
++            raise ValueError("Saved Tau0 prediction is not format_valid")
++        observation["high_level_subtask"] = normalize_subtask(proposal.get("subtask"), required=True)
++    os.environ["CAP_SUBTASK_PLANNER_CONFIG"] = args.planner_config
++    os.environ["AGENTICWAM_HYBRID"] = "0"  # This tool generates actions; it executes no code/motion.
++    os.environ["AGENTICWAM_CODE_PREAMBLE_FILE"] = str(ROOT / "configs/robotwin/tasks_indep" / row["task"] / "preamble.txt")
++    os.environ["AGENTICWAM_CODE_NO_HISTORY"] = "1"
++    sys.path.insert(0, str(ROOT / "robotwin/deploy"))
++    from deploy_policy import get_model
++    policy = get_model({"sim_task": "cap_subtask_robotwin", "sim_paths_overrides": "paths=local",
++                        "use_code_expert": True, "ckpt_setting": args.ckpt,
++                        "dataset_stats_path": args.dataset_stats, "device": args.device,
++                        "num_inference_steps": args.steps})
++    actions = policy._infer_action_chunk(observation, row["instruction"])
++    result = {"instruction": row["instruction"], "high_level_subtask": policy._last_subtask,
++              "code": policy._last_code, "action_chunk": actions.tolist(),
++              "action_type": "qpos_abs", "action_dim": 14,
++              "conditioning": "tau0_subtask_text_v1"}
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    with args.output.open("x") as handle:
++        json.dump(result, handle, ensure_ascii=False, indent=2)
++    print(f"Wrote {args.output}")
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ b/scripts/predict_tau0_subtasks.py
+@@ -0,0 +1,33 @@
++#!/usr/bin/env python3
++"""Query the frozen Tau0 service in episode order, carrying only past planner memory."""
++import argparse
++import json
++from pathlib import Path
++from agenticwam.coding.subtask_data import read_jsonl
++from agenticwam.coding.tau0_client import ProposalClient
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--input", required=True, type=Path)
++    parser.add_argument("--output", required=True, type=Path)
++    parser.add_argument("--planner-config", default="configs/subtask/planner.yaml")
++    args = parser.parse_args()
++    rows = sorted(read_jsonl(args.input), key=lambda row: (row["dataset_root"], row["episode_index"], row["frame_start"]))
++    client = ProposalClient.from_config(args.planner_config)
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    previous = None
++    with args.output.open("x") as handle:
++        for row in rows:
++            episode = (row["dataset_root"], row["episode_index"])
++            if episode != previous:
++                client.reset()
++            images = {view: (args.input.resolve().parent / value).resolve() for view, value in row["images"].items()}
++            result = client.predict(row["instruction"], images)
++            handle.write(json.dumps({"id": row["id"], **result}, ensure_ascii=False) + "\n")
++            handle.flush()
++            previous = episode
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ b/scripts/prepare_subtask_data_config.py
+@@ -0,0 +1,52 @@
++#!/usr/bin/env python3
++"""Derive a conditioned dataset config from the original RoboTwin code-labeled data."""
++import argparse
++from pathlib import Path
++import yaml
++
++
++def generate(source, tasks):
++    config = yaml.safe_load(Path(source).read_text())
++    entries = config["train"]["dataset"]["datasets"]
++    selected = []
++    names = set()
++    for entry in entries:
++        # Published cap dataset layout: <root>/<task>/lerobot/robotwin2.0.
++        name = Path(entry["dataset_dirs"][0]).parent.parent.name
++        if tasks and name not in tasks:
++            continue
++        entry["subtask_cache_path"] = "${paths.robotwin_subtasks}/" + name + "/subtask_cache.json"
++        entry["require_high_level_subtask"] = True
++        entry["pretrained_norm_stats"] = "${paths.robotwin_dataset_stats}"
++        entry["processor"]["norm_default_mode"] = "q01/q99"
++        selected.append(entry)
++        names.add(name)
++    if not selected or (tasks and set(tasks) - names):
++        raise ValueError(f"Unknown/empty tasks: {sorted(set(tasks or []) - names)}")
++    # Keep the original DeadlineDataset/ConcatDataset wrappers, with selected leaves.
++    config["train"]["dataset"]["datasets"] = selected
++    config.pop("_common", None)
++    config.pop("_processor", None)
++    config.pop("_shape_meta", None)
++    return config
++
++
++def main():
++    root = Path(__file__).resolve().parents[1]
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--source", default=str(root / "configs/robotwin/data/robotwin_cap.yaml"))
++    parser.add_argument("--tasks", default="click_alarmclock", help="comma-separated tasks, or all")
++    parser.add_argument("--output", default=str(root / "configs/robotwin/data/cap_subtask.yaml"))
++    parser.add_argument("--overwrite", action="store_true")
++    args = parser.parse_args()
++    output = Path(args.output)
++    if output.exists() and not args.overwrite:
++        raise FileExistsError(f"{output}; use --overwrite to regenerate")
++    config = generate(args.source, None if args.tasks == "all" else args.tasks.split(","))
++    output.parent.mkdir(parents=True, exist_ok=True)
++    output.write_text("# Derived from robotwin_cap.yaml; adds episode-aligned Tau0 conditioning.\n" + yaml.safe_dump(config, sort_keys=False))
++    print(f"Wrote {output}")
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ b/scripts/serve_tau0_proposal.sh
+@@ -0,0 +1,13 @@
++#!/usr/bin/env bash
++# Run in a SEPARATE Transformers 5 environment; do not alter AgenticWAM's env.
++set -euo pipefail
++ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++PROPOSAL_PYTHON="${PROPOSAL_PYTHON:-$ROOT/.venv-proposal/bin/python}"
++if [[ ! -x "$PROPOSAL_PYTHON" ]]; then
++  echo "Missing Proposal environment: $PROPOSAL_PYTHON. See README.txt." >&2
++  exit 1
++fi
++export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
++exec "$PROPOSAL_PYTHON" -m tau0_proposal.serve \
++  --model "${TAU0_PROPOSAL_WEIGHTS:?Set TAU0_PROPOSAL_WEIGHTS to the full Proposal checkpoint}" \
++  --device "${PROPOSAL_DEVICE:-cuda:1}" --host 127.0.0.1 --port "${PROPOSAL_PORT:-10089}" "$@"
+--- /dev/null
++++ b/scripts/train_cap_subtask.sh
+@@ -0,0 +1,6 @@
++#!/usr/bin/env bash
++set -euo pipefail
++ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++source "$ROOT/scripts/activate_local.sh"
++export NPROC="${NPROC:-2}"
++exec bash "$ROOT/scripts/train_robotwin.sh" cap_subtask_robotwin paths=local "$@"
+--- /dev/null
++++ b/scripts/validate_cap_subtask.sh
+@@ -0,0 +1,11 @@
++#!/usr/bin/env bash
++# CPU tests and command planning only; no model downloads, GPU jobs or robot motion.
++set -euo pipefail
++ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
++source "$ROOT/scripts/activate_local.sh"
++python -m unittest discover -s tests -v
++python -m compileall -q src scripts robotwin
++python scripts/launch_train.py --task cap_subtask_robotwin --nproc 2 --dry-run paths=local
++bash scripts/eval_cap_subtask.sh \
++  --ckpt /home/yilianli/project/models/agentic-wam-robotwin-release/hybrid.pt \
++  --tasks click_alarmclock --plan smoke --protocols clean --episodes 1 --shards 1 --dry-run
+--- /dev/null
++++ b/src/agenticwam/coding/subtask_cache.py
+@@ -0,0 +1,66 @@
++"""Episode/frame keyed planner cache, independent of loader splits, ordering and retries."""
++import bisect
++import hashlib
++import json
++from pathlib import Path
++
++from .subtask_conditioning import SubtaskConditionError, normalize_subtask
++
++
++def dataset_fingerprint(root):
++    digest = hashlib.sha256()
++    for name in ("info.json", "episodes.jsonl", "tasks.jsonl"):
++        path = Path(root) / "meta" / name
++        if not path.is_file():
++            raise SubtaskConditionError(f"Missing LeRobot metadata: {path}")
++        digest.update(name.encode())
++        digest.update(path.read_bytes())
++    return digest.hexdigest()
++
++
++class SubtaskCache:
++    def __init__(self, path):
++        self.path = Path(path)
++        doc = json.loads(self.path.read_text())
++        if doc.get("schema_version") != 1 or not doc.get("datasets"):
++            raise SubtaskConditionError(f"Invalid subtask cache schema: {self.path}")
++        self.datasets = {}
++        for dataset in doc["datasets"]:
++            root = str(Path(dataset["root"]).resolve())
++            if root in self.datasets:
++                raise SubtaskConditionError(f"Duplicate cache dataset: {root}")
++            if dataset.get("metadata_sha256") != dataset_fingerprint(root):
++                raise SubtaskConditionError(f"Dataset metadata changed since proposal generation: {root}")
++            episodes = {}
++            for ep, record in dataset["episodes"].items():
++                segments = record["segments"]
++                cursor = 0
++                for segment in segments:
++                    a, b = segment["start"], segment["end"]
++                    if type(a) is not int or type(b) is not int or a != cursor or b <= a:
++                        raise SubtaskConditionError(f"Gap/overlap in {root} episode {ep}")
++                    normalize_subtask(segment["subtask"], required=True)
++                    cursor = b
++                if cursor != record["length"] or cursor <= 0:
++                    raise SubtaskConditionError(f"Incomplete coverage in {root} episode {ep}")
++                episodes[int(ep)] = (record["length"], [s["start"] for s in segments], segments)
++            self.datasets[root] = episodes
++
++    def validate_selection(self, root, episodes):
++        key = str(Path(root).resolve())
++        available = self.datasets.get(key, {})
++        metadata = {int(row["episode_index"]): int(row["length"])
++                    for line in (Path(root) / "meta/episodes.jsonl").read_text().splitlines()
++                    if line.strip() for row in [json.loads(line)]}
++        for ep in episodes:
++            if ep not in available or available[ep][0] != metadata[ep]:
++                raise SubtaskConditionError(f"Missing/wrong-length subtask labels: {root}, episode {ep}")
++
++    def lookup(self, root, episode, frame):
++        try:
++            length, starts, segments = self.datasets[str(Path(root).resolve())][int(episode)]
++            if not 0 <= int(frame) < length:
++                raise KeyError(frame)
++            return segments[bisect.bisect_right(starts, int(frame)) - 1]["subtask"]
++        except (KeyError, IndexError) as exc:
++            raise SubtaskConditionError(f"No subtask for dataset={root}, episode={episode}, frame={frame}") from exc
+--- /dev/null
++++ b/src/agenticwam/coding/subtask_conditioning.py
+@@ -0,0 +1,46 @@
++"""The shared train/inference contract for a frozen Tau0 planner's text output."""
++import json
++
++
++class SubtaskConditionError(ValueError):
++    """Missing or invalid planner conditioning; never retry with another training frame."""
++
++
++def normalize_subtask(value, *, required=False):
++    if value is None:
++        if required:
++            raise SubtaskConditionError("This model requires a high_level_subtask from Tau0 Proposal")
++        return None
++    if not isinstance(value, str) or not value.strip():
++        raise SubtaskConditionError("high_level_subtask must be a non-empty string")
++    value = value.strip()
++    if len(value) > 4096:
++        raise SubtaskConditionError("high_level_subtask exceeds 4096 characters")
++    return value
++
++
++def condition_code_prompt(prompt, subtask, *, tokenizer=None, max_subtask_tokens=128, required=False):
++    """Insert a single escaped comment BEFORE # Next; all of this remains prompt-side.
++
++    JSON escaping prevents a multi-line planner answer from changing the prompt's stage
++    delimiters. Keeping the same function in both paths avoids a train/serve mismatch.
++    None preserves the original prompt byte-for-byte for baseline checkpoints.
++    """
++    subtask = normalize_subtask(subtask, required=required)
++    if subtask is None:
++        return prompt
++    if tokenizer is not None:
++        try:
++            ids = tokenizer.encode(subtask, add_special_tokens=False)
++        except TypeError:
++            ids = tokenizer.encode(subtask)
++        if len(ids) > max_subtask_tokens:
++            raise SubtaskConditionError(
++                f"Tau0 subtask uses {len(ids)} tokens, limit={max_subtask_tokens}; "
++                "shorten the proposal or increase subtask_max_tokens and the prompt budget"
++            )
++    line = "# High-level subtask (Tau0): " + json.dumps(subtask, ensure_ascii=False) + "\n"
++    marker = "# Next:\n"
++    if prompt.endswith(marker):
++        return prompt[:-len(marker)] + line + marker
++    return prompt + ("" if prompt.endswith("\n") else "\n") + line
+--- /dev/null
++++ b/src/agenticwam/coding/subtask_data.py
+@@ -0,0 +1,131 @@
++"""Portable observation manifests and episode-aligned Tau0 proposal caches."""
++import hashlib
++import json
++from pathlib import Path
++
++from .subtask_cache import SubtaskCache, dataset_fingerprint
++from .subtask_conditioning import SubtaskConditionError, normalize_subtask
++
++
++def read_jsonl(path):
++    rows = [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
++    ids = [row["id"] for row in rows]
++    if len(set(ids)) != len(ids) or not ids:
++        raise SubtaskConditionError("Manifest IDs must be unique and the manifest non-empty")
++    return rows
++
++
++def build_cache(observations, predictions, output):
++    provenance = {"observations_sha256": hashlib.sha256(Path(observations).read_bytes()).hexdigest(),
++                  "predictions_sha256": hashlib.sha256(Path(predictions).read_bytes()).hexdigest()}
++    observations, predictions = read_jsonl(observations), read_jsonl(predictions)
++    predicted = {row["id"]: row for row in predictions}
++    if set(predicted) != {row["id"] for row in observations}:
++        raise SubtaskConditionError("Observation and prediction ID sets differ")
++    datasets = {}
++    for row in observations:
++        result = predicted[row["id"]]
++        if result.get("format_valid") is not True:
++            raise SubtaskConditionError(f"Invalid Tau0 prediction: {row['id']}")
++        subtask = normalize_subtask(result.get("subtask"), required=True)
++        root = str(Path(row["dataset_root"]).resolve())
++        if root not in datasets:
++            datasets[root] = {"root": root, "metadata_sha256": dataset_fingerprint(root), "episodes": {}}
++        dataset = datasets[root]
++        if row.get("metadata_sha256") != dataset["metadata_sha256"]:
++            raise SubtaskConditionError("Dataset changed after exporting the camera observations")
++        ep = str(int(row["episode_index"]))
++        record = dataset["episodes"].setdefault(ep, {"length": row["episode_length"], "segments": []})
++        if record["length"] != row["episode_length"]:
++            raise SubtaskConditionError(f"Conflicting lengths for episode {ep}")
++        record["segments"].append({"start": row["frame_start"], "end": row["frame_end"],
++                                   "subtask": subtask, "proposal_id": row["id"]})
++    for dataset in datasets.values():
++        for record in dataset["episodes"].values():
++            record["segments"].sort(key=lambda segment: segment["start"])
++    output = Path(output)
++    if output.exists():
++        raise FileExistsError(output)
++    output.parent.mkdir(parents=True, exist_ok=True)
++    provenance["planner_models"] = sorted({row["planner_model"] for row in predictions if row.get("planner_model")})
++    doc = {"schema_version": 1, "planner": "tau0_proposal", "conditioning": "subtask_text_only", "provenance": provenance,
++           "datasets": list(datasets.values())}
++    temporary = output.with_suffix(output.suffix + ".tmp")
++    try:
++        with temporary.open("x") as handle:
++            json.dump(doc, handle, ensure_ascii=False, indent=2)
++        cache = SubtaskCache(temporary)  # Reject gaps, overlaps and stale metadata before publishing.
++        for dataset in doc["datasets"]:
++            cache.validate_selection(dataset["root"], [int(ep) for ep in dataset["episodes"]])
++        temporary.replace(output)
++    finally:
++        temporary.unlink(missing_ok=True)
++    return doc
++
++
++def export_observations(dataset_root, output_dir, *, stride=24, episodes=None):
++    """LeRobot v2.x: extract ONLY each interval's current observation, never future frames.
++
++    Cache keys retain original episode/frame identities, so selecting/reordering training
++    episodes cannot silently move a subtask label onto a different trajectory.
++    """
++    import av
++    from PIL import Image
++
++    if stride <= 0:
++        raise ValueError("stride must be positive")
++    root, out = Path(dataset_root).resolve(), Path(output_dir).resolve()
++    manifest = out / "observations.jsonl"
++    if manifest.exists():
++        raise FileExistsError(manifest)
++    info = json.loads((root / "meta/info.json").read_text())
++    all_episodes = [json.loads(line) for line in (root / "meta/episodes.jsonl").read_text().splitlines() if line.strip()]
++    selected = None if episodes is None else {int(ep) for ep in episodes}
++    if selected is not None and selected - {int(ep["episode_index"]) for ep in all_episodes}:
++        raise ValueError("Selected episode does not exist")
++    fingerprint = dataset_fingerprint(root)
++    chunk_size = int(info.get("chunks_size", 1000))
++    video_template = info.get("video_path", "videos/chunk-{episode_chunk:03d}/{video_key}/episode_{episode_index:06d}.mp4")
++    camera_keys = {"head": "observation.images.cam_high", "left": "observation.images.cam_left_wrist",
++                   "right": "observation.images.cam_right_wrist"}
++    missing = set(camera_keys.values()) - set(info["features"])
++    if missing:
++        raise ValueError(f"Expected the three RoboTwin camera keys, missing: {sorted(missing)}")
++    out.mkdir(parents=True, exist_ok=True)
++    count = 0
++    with manifest.open("x") as handle:
++        for episode in sorted(all_episodes, key=lambda ep: int(ep["episode_index"])):
++            ep, length = int(episode["episode_index"]), int(episode["length"])
++            if selected is not None and ep not in selected:
++                continue
++            if length <= 0 or not episode.get("tasks"):
++                raise ValueError(f"Episode {ep} has no frames or instruction")
++            starts = list(range(0, length, stride))
++            image_paths = {frame: {} for frame in starts}
++            for view, key in camera_keys.items():
++                video = root / video_template.format(episode_chunk=ep // chunk_size, video_key=key, episode_index=ep)
++                remaining = set(starts)
++                with av.open(str(video)) as container:
++                    for frame_index, frame in enumerate(container.decode(video=0)):
++                        if frame_index in remaining:
++                            image_path = out / "images" / f"ep{ep:06d}_f{frame_index:06d}_{view}.png"
++                            image_path.parent.mkdir(parents=True, exist_ok=True)
++                            if image_path.exists():
++                                raise FileExistsError(image_path)
++                            Image.fromarray(frame.to_ndarray(format="rgb24")).save(image_path)
++                            image_paths[frame_index][view] = str(image_path)
++                            remaining.remove(frame_index)
++                        if not remaining:
++                            break
++                if remaining:
++                    raise ValueError(f"Video is shorter than metadata: {video}")
++            prefix = hashlib.sha256(str(root).encode()).hexdigest()[:12]
++            for start in starts:
++                row = {"id": f"{prefix}:ep{ep}:f{start}", "instruction": episode["tasks"][0],
++                       "task_type": "full_qa", "memory": "(empty)", "images": image_paths[start],
++                       "dataset_root": str(root), "metadata_sha256": fingerprint,
++                       "episode_index": ep, "episode_length": length,
++                       "frame_start": start, "frame_end": min(start + stride, length)}
++                handle.write(json.dumps(row, ensure_ascii=False) + "\n")
++                count += 1
++    return manifest, count
+--- /dev/null
++++ b/src/agenticwam/coding/tau0_client.py
+@@ -0,0 +1,90 @@
++"""HTTP boundary isolates Tau0's Transformers 5 environment from AgenticWAM's 4.x."""
++import base64
++import io
++import json
++import time
++import urllib.request
++from pathlib import Path
++
++import numpy as np
++from PIL import Image
++
++from .subtask_conditioning import SubtaskConditionError, normalize_subtask
++
++
++CAMERAS = {"head": "head_camera", "left": "left_camera", "right": "right_camera"}
++
++
++def encode_image(image):
++    if isinstance(image, (str, Path)):
++        with Image.open(image) as loaded:
++            image = loaded.convert("RGB")
++    elif not isinstance(image, Image.Image):
++        array = np.asarray(image)
++        if array.ndim != 3 or array.shape[2] != 3 or array.dtype != np.uint8:
++            raise SubtaskConditionError("Proposal images must be HWC uint8 RGB")
++        image = Image.fromarray(array)
++    buffer = io.BytesIO()
++    image.convert("RGB").save(buffer, format="PNG")
++    return base64.b64encode(buffer.getvalue()).decode("ascii")
++
++
++class ProposalClient:
++    def __init__(self, url="http://127.0.0.1:10089/predict", timeout_s=120, task_type="full_qa"):
++        if task_type not in ("full_qa", "subtask_only"):
++            raise ValueError("task_type must be full_qa or subtask_only")
++        self.url, self.timeout_s, self.task_type = url, float(timeout_s), task_type
++        self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
++        self.reset()
++
++    @classmethod
++    def from_config(cls, path):
++        import yaml
++        config = yaml.safe_load(Path(path).read_text())
++        return cls(**{key: config[key] for key in ("url", "timeout_s", "task_type") if key in config})
++
++    def reset(self):
++        self.memory = "(empty)"
++        self.last_result = None
++
++    def health(self):
++        try:
++            with self.opener.open(self.url.rsplit("/", 1)[0] + "/health", timeout=self.timeout_s) as response:
++                result = json.load(response)
++            if result.get("ready") is not True:
++                raise ValueError("planner is not ready")
++            return result
++        except Exception as exc:
++            raise SubtaskConditionError(f"Tau0 Proposal health check failed: {exc}") from exc
++
++    def predict(self, instruction, images):
++        if not isinstance(instruction, str) or not instruction.strip():
++            raise SubtaskConditionError("Proposal requires the original task instruction")
++        if set(images) != set(CAMERAS):
++            raise SubtaskConditionError("Proposal requires exactly head, left and right camera views")
++        memory_in = self.memory
++        payload = {"instruction": instruction, "memory": memory_in, "task_type": self.task_type,
++                   "images": {view: encode_image(images[view]) for view in CAMERAS}}
++        request = urllib.request.Request(self.url, data=json.dumps(payload).encode(),
++                                         headers={"Content-Type": "application/json"})
++        started = time.perf_counter()
++        try:
++            with self.opener.open(request, timeout=self.timeout_s) as response:
++                result = json.load(response)
++        except Exception as exc:
++            raise SubtaskConditionError(f"Tau0 Proposal request failed: {type(exc).__name__}: {exc}") from exc
++        if not isinstance(result, dict) or result.get("format_valid") is not True:
++            raise SubtaskConditionError("Tau0 returned an invalid proposal; refusing unconditioned inference")
++        subtask = normalize_subtask(result.get("subtask"), required=True)
++        next_memory = result.get("next_memory", memory_in)
++        if not isinstance(next_memory, str):
++            raise SubtaskConditionError("Tau0 next_memory must be a string")
++        self.memory = next_memory.strip() or "(empty)"
++        self.last_result = {**result, "subtask": subtask, "memory_in": memory_in,
++                            "next_memory": self.memory,
++                            "client_latency_ms": round((time.perf_counter() - started) * 1000, 2)}
++        return self.last_result
++
++    def predict_robotwin(self, instruction, observation):
++        return self.predict(instruction, {view: observation["observation"][camera]["rgb"]
++                                          for view, camera in CAMERAS.items()})
+--- /dev/null
++++ b/tests/test_subtask_integration.py
+@@ -0,0 +1,314 @@
++import base64
++import io
++import json
++import os
++import tempfile
++import threading
++import unittest
++from http.server import BaseHTTPRequestHandler, HTTPServer
++from pathlib import Path
++from types import SimpleNamespace
++from unittest.mock import patch
++
++import numpy as np
++import torch
++from PIL import Image
++
++from agenticwam.coding.subtask_cache import SubtaskCache, dataset_fingerprint
++from agenticwam.coding.subtask_conditioning import SubtaskConditionError, condition_code_prompt
++from agenticwam.coding.subtask_data import build_cache, export_observations
++from agenticwam.coding.tau0_client import ProposalClient
++from agenticwam.models.experts.code_expert import ByteTokenizer, _build_mock_code_expert
++from agenticwam.models.cosmos_mot.agenticwam_model import AgenticWAMCosmos
++
++torch.set_num_threads(1)
++
++
++def metadata(root, lengths):
++    meta = root / "meta"
++    meta.mkdir(parents=True)
++    info = {"fps": 10, "chunks_size": 1000,
++            "video_path": "videos/{video_key}/episode_{episode_index:06d}.mkv",
++            "features": {"observation.images." + key: {} for key in ("cam_high", "cam_left_wrist", "cam_right_wrist")}}
++    (meta / "info.json").write_text(json.dumps(info))
++    (meta / "episodes.jsonl").write_text("".join(json.dumps({"episode_index": ep, "length": length, "tasks": ["Move the cube"]}) + "\n"
++                                                  for ep, length in lengths.items()))
++    (meta / "tasks.jsonl").write_text('{"task_index":0,"task":"Move the cube"}\n')
++
++
++def write_jsonl(path, rows):
++    path.write_text("".join(json.dumps(row) + "\n" for row in rows))
++
++
++class PromptAndModelTests(unittest.TestCase):
++    def test_factory_enables_the_condition_on_model_and_expert(self):
++        from agenticwam.models.cosmos_mot.build import create_agenticwam_cosmos
++        fake = SimpleNamespace(code_expert=self.expert())
++        with patch("agenticwam.models.cosmos_mot.build.build_agenticwam_cosmos", return_value=fake):
++            result = create_agenticwam_cosmos(use_code_expert=True, code_objective="joint",
++                                              high_level_subtask_conditioning=True, code_vision="none")
++        self.assertTrue(result.require_high_level_subtask)
++        self.assertTrue(result.code_expert.require_high_level_subtask)
++        with self.assertRaises(ValueError):
++            create_agenticwam_cosmos(use_code_expert=True, code_objective="ar", high_level_subtask_conditioning=True)
++        with patch.dict(os.environ, {"AGENTICWAM_FAST_JOINT": "1"}), self.assertRaises(ValueError):
++            create_agenticwam_cosmos(use_code_expert=True, code_objective="joint", high_level_subtask_conditioning=True)
++
++    def test_checkpoint_records_and_enforces_conditioning(self):
++        class Tiny(AgenticWAMCosmos):
++            def __init__(self, required):
++                torch.nn.Module.__init__(self)
++                self.weight = torch.nn.Parameter(torch.tensor([3.0]))
++                self.require_high_level_subtask = required
++
++            def _trainable_state_dict(self):
++                return self.state_dict()
++
++            def extra_trainable_modules(self):
++                return []
++
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "checkpoint.pt"
++            Tiny(True).save_checkpoint(path, step=12)
++            record = torch.load(path, weights_only=True)
++            self.assertEqual(record["conditioning"]["kind"], "tau0_subtask_text_v1")
++            with self.assertRaises(SubtaskConditionError):
++                Tiny(False).load_checkpoint(path)
++            restored = Tiny(True)
++            restored.load_checkpoint(path)
++            self.assertEqual(float(restored.weight.detach()[0]), 3.0)
++
++    def expert(self):
++        torch.manual_seed(7)
++        return _build_mock_code_expert(1, 2, 16, 32, max_code_tokens=768)
++
++    def test_condition_is_not_a_label_and_changes_real_code_logits(self):
++        expert = self.expert()
++        expert.require_high_level_subtask = True
++        prompt = "# Instruction: Move cube\n# Helper library:\ndef reach(hand): ...\n# Next:\n"
++        code = "reach('left')"
++        ids, labels = expert.build_code_batch([prompt], [code], "cpu", high_level_subtasks=["Use left arm"])
++        prefix_length = int((labels[0] == -100).sum())
++        expected = condition_code_prompt(prompt, "Use left arm")
++        self.assertEqual(bytes(ids[0, :prefix_length].tolist()).decode(), expected)
++        self.assertTrue(torch.all(labels[0, :prefix_length] == -100))
++        self.assertEqual(labels[0, prefix_length].item(), ord('r'))
++        changed, _ = expert.build_code_batch([prompt], [code], "cpu", high_level_subtasks=["Use right arm"])
++        logits = expert._forward_code_only(ids)
++        changed_logits = expert._forward_code_only(changed)
++        self.assertFalse(torch.allclose(logits[:, -2], changed_logits[:, -2]))
++        loss = expert.code_loss(logits, labels)["loss"]
++        self.assertTrue(torch.isfinite(loss))
++        loss.backward()
++        self.assertGreater(float(expert.embed_tokens.weight.grad.abs().sum()), 0)
++
++    def test_joint_noise_never_masks_the_condition(self):
++        expert = self.expert()
++        expert.code_objective, expert.mask_token_id = "joint", 257
++        expert.require_high_level_subtask = True
++        ids, labels = expert.build_code_batch(["Move cube"], ["reach('left')"], "cpu", high_level_subtasks=["Use left arm"])
++        prefix = ByteTokenizer().encode(condition_code_prompt("# Instruction: Move cube\n", "Use left arm"))
++        self.assertEqual(ids[0, :len(prefix)].tolist(), prefix)
++        self.assertTrue(torch.all(labels[0, :len(prefix)] == -100))
++        self.assertGreater(int((labels != -100).sum()), 0)
++
++    def test_missing_condition_and_prompt_overflow_fail(self):
++        expert = self.expert()
++        expert.require_high_level_subtask = True
++        with self.assertRaises(SubtaskConditionError):
++            expert.build_code_batch(["Move"], ["reach()"], "cpu")
++        with self.assertRaises(SubtaskConditionError):
++            expert.build_code_batch(["Move"], ["reach()"], "cpu", max_length=12, high_level_subtasks=["Use left"])
++        with self.assertRaises(SubtaskConditionError):
++            condition_code_prompt("Move", "x" * 200, tokenizer=ByteTokenizer())
++        self.assertEqual(condition_code_prompt("original\n", None), "original\n")
++
++    def test_actual_joint_inference_uses_identical_conditioned_prompt(self):
++        class CapturedPrompt(Exception):
++            pass
++
++        expert = self.expert()
++        instruction, subtask = "Move cube", "Use left arm"
++        preamble = "def reach(hand): ...\n# Setup defines: hand\n"
++        training = f"# Instruction: {instruction}\n# Helper library:\n{preamble}# Next:\n"
++        ids, labels = expert.build_code_batch([training], ["reach(hand)"], "cpu", high_level_subtasks=[subtask])
++        expected = bytes(ids[0, :(labels[0] == -100).sum()].tolist()).decode()
++        captured = []
++
++        class Tokenizer(ByteTokenizer):
++            def encode(self, text, **kwargs):
++                if text.startswith("# Instruction:"):
++                    captured.append(text)
++                    raise CapturedPrompt()
++                return super().encode(text)
++
++        expert.tokenizer = Tokenizer()
++        fake = SimpleNamespace(dit=torch.nn.Identity(), device=torch.device("cpu"),
++                               action_expert=torch.nn.Linear(1, 1), n_cameras=3,
++                               code_expert=expert, require_high_level_subtask=True,
++                               cond_timestep=0.1, subtask_max_tokens=128,
++                               _encode_video_latents=lambda x: torch.zeros(1, 1, 3, 1, 1),
++                               _vit_prefix=lambda x: None, _pixel_to_latent=lambda x: 1,
++                               _action_context=lambda p, q: (p, None))
++        fake.action_expert.action_dim = 14
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "preamble.txt"
++            path.write_text(preamble)
++            with patch.dict(os.environ, {"AGENTICWAM_CODE_PREAMBLE_FILE": str(path), "AGENTICWAM_CODE_NO_HISTORY": "1"}):
++                with self.assertRaises(CapturedPrompt):
++                    AgenticWAMCosmos._infer_action_joint(fake, torch.zeros(1), None, torch.zeros(1, 1, 1), 32,
++                                                        instruction=instruction, high_level_subtask=subtask)
++        self.assertEqual(captured, [expected])
++
++
++class CacheAndVideoTests(unittest.TestCase):
++    def test_loader_preserves_identity_after_processor_and_random_retry(self):
++        from agenticwam.datasets.lerobot.base_lerobot_dataset import BaseLerobotDataset
++        class Multi:
++            num_frames = 2
++
++            def __len__(self):
++                return 2
++
++            def __getitem__(self, index):
++                if index == 0:
++                    raise OSError("fixture: unreadable frame")
++                return {"task": "Move cube", "action": torch.zeros(32, 14),
++                        "observation.state": torch.zeros(33, 14),
++                        "observation.images.cam_high": torch.zeros(33, 3, 16, 16),
++                        "action_is_pad": torch.zeros(32, dtype=torch.bool),
++                        "observation.state_is_pad": torch.zeros(33, dtype=torch.bool),
++                        "observation.images.cam_high_is_pad": torch.zeros(33, dtype=torch.bool),
++                        "dataset_index": torch.tensor(1), "episode_index": torch.tensor(9),
++                        "frame_index": torch.tensor(2)}
++
++        base = BaseLerobotDataset.__new__(BaseLerobotDataset)
++        base.multi_dataset = Multi()
++        base.action_meta = [{"key": "default", "lerobot_key": "action", "raw_shape": 14}]
++        base.state_meta = [{"key": "default", "lerobot_key": "observation.state", "raw_shape": 14}]
++        base.image_meta = [{"key": "cam_high", "lerobot_key": "observation.images.cam_high", "raw_shape": [3, 16, 16]}]
++        base.processor = SimpleNamespace(preprocess=lambda data: {"idx": data["idx"]})
++        with patch("numpy.random.randint", return_value=1), patch("traceback.format_exc", return_value="expected fixture retry"):
++            sample = base[0]
++        self.assertEqual(sample["idx"], 1)
++        self.assertEqual(int(sample["dataset_index"]), 1)
++        self.assertEqual(int(sample["episode_index"]), 9)
++        self.assertEqual(int(sample["frame_index"]), 2)
++
++    def test_cache_handles_nonzero_reordered_episodes_and_rejects_staleness(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory) / "dataset"
++            metadata(root, {5: 4, 9: 4})
++            observations, predictions = [], []
++            for ep in (9, 5):
++                for start in (0, 2):
++                    key = f"{ep}:{start}"
++                    observations.append({"id": key, "dataset_root": str(root), "metadata_sha256": dataset_fingerprint(root),
++                                         "episode_index": ep, "episode_length": 4, "frame_start": start, "frame_end": start + 2})
++                    predictions.append({"id": key, "subtask": f"ep{ep} frame{start}", "format_valid": True})
++            a, b, output = Path(directory) / "observations.jsonl", Path(directory) / "predictions.jsonl", Path(directory) / "cache.json"
++            write_jsonl(a, observations)
++            write_jsonl(b, list(reversed(predictions)))
++            build_cache(a, b, output)
++            cache = SubtaskCache(output)
++            cache.validate_selection(root, [9, 5])
++            self.assertEqual(cache.lookup(root, 5, 3), "ep5 frame2")
++            self.assertEqual(cache.lookup(root, 9, 0), "ep9 frame0")
++            with self.assertRaises(SubtaskConditionError):
++                cache.lookup(root, 5, 4)
++            with (root / "meta/tasks.jsonl").open("a") as handle:
++                handle.write('\n')
++            with self.assertRaises(SubtaskConditionError):
++                SubtaskCache(output)
++
++    def test_cache_rejects_gap_and_invalid_proposal(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory) / "dataset"
++            metadata(root, {0: 4})
++            a, b, output = Path(directory) / "a.jsonl", Path(directory) / "b.jsonl", Path(directory) / "out.json"
++            write_jsonl(a, [{"id": "0", "dataset_root": str(root), "metadata_sha256": dataset_fingerprint(root),
++                             "episode_index": 0, "episode_length": 4, "frame_start": 1, "frame_end": 4}])
++            write_jsonl(b, [{"id": "0", "subtask": "Pick cube", "format_valid": True}])
++            with self.assertRaises(SubtaskConditionError):
++                build_cache(a, b, output)
++            self.assertFalse(output.exists())
++            write_jsonl(b, [{"id": "0", "subtask": "Pick cube", "format_valid": False}])
++            with self.assertRaises(SubtaskConditionError):
++                build_cache(a, b, output)
++
++    def test_export_reads_current_frames_from_real_three_camera_videos(self):
++        import av
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory) / "dataset"
++            metadata(root, {5: 4})
++            for camera in ("cam_high", "cam_left_wrist", "cam_right_wrist"):
++                video = root / f"videos/observation.images.{camera}/episode_000005.mkv"
++                video.parent.mkdir(parents=True, exist_ok=True)
++                with av.open(str(video), "w") as container:
++                    stream = container.add_stream("ffv1", rate=10)
++                    stream.width, stream.height, stream.pix_fmt = 16, 16, "bgr0"
++                    for index in range(4):
++                        frame = av.VideoFrame.from_ndarray(np.full((16, 16, 3), 20 + index * 30, dtype=np.uint8), format="rgb24")
++                        for packet in stream.encode(frame):
++                            container.mux(packet)
++                    for packet in stream.encode():
++                        container.mux(packet)
++            manifest, count = export_observations(root, Path(directory) / "export", stride=2)
++            rows = [json.loads(line) for line in manifest.read_text().splitlines()]
++            self.assertEqual(count, 2)
++            self.assertEqual([row["frame_start"] for row in rows], [0, 2])
++            self.assertEqual(Image.open(rows[0]["images"]["head"]).getpixel((0, 0)), (20, 20, 20))
++            self.assertEqual(Image.open(rows[1]["images"]["right"]).getpixel((0, 0)), (80, 80, 80))
++
++
++class HttpPlannerTests(unittest.TestCase):
++    def test_http_contract_memory_reset_and_invalid_format(self):
++        requests = []
++
++        class Handler(BaseHTTPRequestHandler):
++            def do_GET(self):
++                self.send_response(200)
++                self.end_headers()
++                self.wfile.write(b'{"ready":true,"contract":"tau0_proposal_v1"}')
++
++            def do_POST(self):
++                row = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
++                requests.append(row)
++                result = {"format_valid": row["instruction"] != "invalid", "subtask": "Pick cube with left arm",
++                          "next_memory": "The cube is being picked"}
++                self.send_response(200)
++                self.send_header("Content-Type", "application/json")
++                self.end_headers()
++                self.wfile.write(json.dumps(result).encode())
++
++            def log_message(self, *args):
++                pass
++
++        server = HTTPServer(("127.0.0.1", 0), Handler)
++        thread = threading.Thread(target=server.serve_forever, daemon=True)
++        thread.start()
++        try:
++            client = ProposalClient(f"http://127.0.0.1:{server.server_port}/predict")
++            self.assertTrue(client.health()["ready"])
++            images = {view: np.full((16, 16, 3), color, dtype=np.uint8)
++                      for view, color in (("head", 20), ("left", 40), ("right", 60))}
++            self.assertEqual(client.predict("Move cube", images)["subtask"], "Pick cube with left arm")
++            client.predict("Move cube", images)
++            self.assertEqual(requests[0]["memory"], "(empty)")
++            self.assertEqual(requests[1]["memory"], "The cube is being picked")
++            client.reset()
++            client.predict("Move cube", images)
++            self.assertEqual(requests[-1]["memory"], "(empty)")
++            pixel = Image.open(io.BytesIO(base64.b64decode(requests[0]["images"]["left"]))).getpixel((0, 0))
++            self.assertEqual(pixel, (40, 40, 40))
++            with self.assertRaises(SubtaskConditionError):
++                client.predict("invalid", images)
++            self.assertEqual(client.memory, "The cube is being picked")
++        finally:
++            server.shutdown()
++            thread.join()
++            server.server_close()
++
++
++if __name__ == "__main__":
++    unittest.main()

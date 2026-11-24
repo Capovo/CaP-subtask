@@ -1,0 +1,335 @@
+schema_version: 1
+artifact_kind: experiment_plan_not_runner_config
+created: '2026-11-24'
+status: proposed_not_executed
+human_plan: ../../ROBOTWIN_EXPERIMENT_PLAN.txt
+objective: Measure frozen Tau0 subtask conditioning on AW-0 Code Expert against paired controls and paper Table
+  1.
+references:
+  table_values: user_supplied_image
+  paper: https://arxiv.org/html/2610.30136v1
+  current_leaderboard: https://robotwin-platform.github.io/leaderboard
+comparison_limits:
+- Published table uses 50 rollouts per task and setting; current leaderboard and repository standard default use
+  100.
+- Original WAM and Hybrid use different downstream demonstration collection pipelines.
+- Warm-starting from hybrid.pt is continued adaptation; original downstream exposure remains part of the model history.
+- Unknown original paper scene seeds and instruction pool prevent claiming exact episode-level reproduction.
+- Tau0 adds a 9B planner and inference cost; matched low-level training budgets do not imply equal inference compute.
+routes:
+  A_recommended_first:
+    initial_checkpoint: /home/yilianli/project/models/agentic-wam-robotwin-release/hybrid.pt
+    training_data: 50 clean successful CaP-aligned demos per task; prefer original release data
+    tasks: 50
+    new_selected_demonstrations: 2500
+    cumulative_downstream_exposure: unknown_if_newly_collected; disclose separately
+    interpretation: continued adaptation with matched C0/C1; paper values are reference
+  B_uniform_data_budget:
+    initial_checkpoint: /home/yilianli/project/models/agentic-wam-pretrain/agenticwam_pretrain.pt
+    training_data: same official 2500 clean demos with aligned program labels added
+    tasks: 50
+    selected_training_demonstrations: 2500
+    interpretation: separate data-budget-controlled study; training compute must still be disclosed
+evaluation:
+  task_names:
+  - adjust_bottle
+  - beat_block_hammer
+  - blocks_ranking_rgb
+  - blocks_ranking_size
+  - click_alarmclock
+  - click_bell
+  - dump_bin_bigbin
+  - grab_roller
+  - handover_block
+  - handover_mic
+  - hanging_mug
+  - lift_pot
+  - move_can_pot
+  - move_pillbottle_pad
+  - move_playingcard_away
+  - move_stapler_pad
+  - open_laptop
+  - open_microwave
+  - pick_diverse_bottles
+  - pick_dual_bottles
+  - place_a2b_left
+  - place_a2b_right
+  - place_bread_basket
+  - place_bread_skillet
+  - place_burger_fries
+  - place_can_basket
+  - place_cans_plasticbox
+  - place_container_plate
+  - place_dual_shoes
+  - place_empty_cup
+  - place_fan
+  - place_mouse_pad
+  - place_object_basket
+  - place_object_scale
+  - place_object_stand
+  - place_phone_stand
+  - place_shoe
+  - press_stapler
+  - put_bottles_dustbin
+  - put_object_cabinet
+  - rotate_qrcode
+  - scan_object
+  - shake_bottle
+  - shake_bottle_horizontally
+  - stack_blocks_three
+  - stack_blocks_two
+  - stack_bowls_three
+  - stack_bowls_two
+  - stamp_seal
+  - turn_switch
+  num_tasks: 50
+  settings:
+    clean: demo_clean
+    random: demo_randomized
+  runner_protocol_argument: clean,randomized
+  rollouts_per_task_per_setting: 50
+  shards_per_task_per_setting: 1
+  shard_seed_base: 0
+  upstream_candidate_scene_seed_start: 100000
+  scene_selection: official expert validity check before policy evaluation; freeze or verify accepted scene seeds
+    per method
+  instruction_pool: seen
+  paper_instruction_pool_verified: false
+  paper_scene_seeds_obtained: false
+  rollouts_per_variant: 5000
+  variants:
+  - id: R0
+    method: AW-0 released WAM (local)
+    checkpoint: /home/yilianli/project/models/agentic-wam-robotwin-release/wam.pt
+    execution: wam
+    extra_training: false
+    tau0: false
+    evaluation_parameters: published_wam_config
+  - id: R1
+    method: AW-0 released Hybrid (local)
+    checkpoint: /home/yilianli/project/models/agentic-wam-robotwin-release/hybrid.pt
+    execution: hybrid
+    extra_training: false
+    tau0: false
+    evaluation_parameters: published_hybrid_config
+  - id: C0
+    method: Matched continued SFT (WAM)
+    checkpoint: null
+    execution: wam
+    extra_training: true
+    tau0: false
+    evaluation_parameters: controlled
+    training_pair: C0_C1
+  - id: C1
+    method: CaP-subtask (WAM)
+    checkpoint: null
+    execution: wam
+    extra_training: true
+    tau0: true
+    evaluation_parameters: controlled
+    training_pair: C0_C1
+  - id: C0H
+    method: Matched continued SFT (Hybrid)
+    checkpoint: null
+    checkpoint_reuse_from: C0
+    execution: hybrid
+    extra_training: true
+    tau0: false
+    evaluation_parameters: controlled
+  - id: C1H
+    method: CaP-subtask (Hybrid)
+    checkpoint: null
+    checkpoint_reuse_from: C1
+    execution: hybrid
+    extra_training: true
+    tau0: true
+    evaluation_parameters: controlled
+  total_full_matrix_rollouts: 30000
+  runner_job_retries: 0
+  policy_failures: count_as_failure_in_fixed_denominator
+  infrastructure_errors: record_error_restore_same_scene_and_block_final_table_until_resolved
+  require_exact_scene_instruction_pairing: true
+  allow_privileged_evaluation_inputs: false
+  allow_random_training_demonstrations_in_primary_study: false
+  controlled_parameters:
+    action_dim: 14
+    proprio_dim: 14
+    n_cameras: 3
+    action_type: qpos_abs
+    num_inference_steps: 40
+    code_tokens: 124
+    replan_steps: 24
+    image_crop: 0.95
+    no_history: true
+    decode:
+      confidence_threshold: 0.5
+      max_reveal_per_step: 4
+  released_wam_parameters:
+    num_inference_steps: 20
+    code_tokens: 128
+    replan_steps: 24
+    image_crop: 0.95
+    decode:
+      confidence_threshold: 0.0
+      max_reveal_per_step: 9999
+  reset_each_episode:
+  - tau0_memory
+  - code_cache
+  - action_queue
+  - hybrid_arbiter
+  freeze:
+  - task_programs
+  - helper_libraries
+  - perception_versions
+  - arbiter_rules
+  - step_limits
+  - success_checks
+  - image_preprocessing
+training_suggestion_route_A:
+  status: initial_hypothesis_not_validated
+  paired_models:
+  - C0
+  - C1
+  seed: 42
+  optional_replication_seeds:
+  - 43
+  - 44
+  num_gpus: 2
+  batch_size_per_gpu: 1
+  gradient_accumulation_steps: 2
+  effective_batch_size: 4
+  mixed_precision: bf16
+  deepspeed_zero_stage: 2
+  gradient_checkpointing: true
+  learning_rate: 2.0e-05
+  weight_decay: 0.01
+  scheduler: cosine
+  initial_main_steps: 5000
+  optional_main_steps_after_development: 15000
+  save_every: 1000
+  full_model_feasibility_steps: 100
+  pilot_steps:
+  - 500
+  - 1000
+  joint_loss_weights:
+    video: 1.0
+    action: 1.0
+    code: 0.5
+  max_prompt_plus_code_tokens: 768
+  code_canvas: 124
+  subtask_max_tokens: 128
+  freeze_tau0: true
+  freeze_vae: true
+  preserve_frozen_vision_tower: true
+  stop_planner_during_low_level_training: true
+  selection: independent Clean development scenes only; freeze before formal evaluation
+  normalization: reuse release 14D stats for warm-start; if changed apply identically to both arms and record hash
+  fast_joint_enabled: false
+planner:
+  model_id: sii-research/tau-0-vla-proposal
+  base_architecture: Qwen3.5-9B
+  primary_adaptation: none_frozen
+  task_type: full_qa
+  camera_order:
+  - head
+  - left
+  - right
+  offline_stride_frames: 24
+  condition_field: subtask
+  memory_field: next_memory
+  condition_masked: false
+  condition_is_ce_target: false
+  online_uses_current_policy_observations: true
+  allow_demonstration_cache_replay_at_evaluation: false
+  forbid_inputs:
+  - future_frames
+  - future_actions
+  - ground_truth_stage
+  - ground_truth_object_poses
+  - success_oracle
+pilot_tasks:
+- click_alarmclock
+- handover_block
+- stack_blocks_two
+- open_microwave
+- put_object_cabinet
+- place_object_scale
+- pick_dual_bottles
+- stack_bowls_three
+metrics:
+  clean: arithmetic mean of 50 per-task success rates
+  random: arithmetic mean of 50 per-task success rates
+  average: (clean + random) / 2
+  display_decimals: 1
+  difference_unit: percentage_points
+  primary_conditioning_comparison: C1-C0
+  secondary_conditioning_comparison: C1H-C0H
+  execution_comparisons:
+  - C0H-C0
+  - C1H-C1
+  uncertainty: paired bootstrap over tasks for local paired comparisons; not published aggregate values
+  required_diagnostics:
+  - per_task_success
+  - actual_scene_seed
+  - actual_instruction
+  - policy_failure_type
+  - planner_latency_median_p95
+  - replan_latency_median_p95
+  - episode_latency_median_p95
+  - gpu_peak_memory
+  - hybrid_code_acceptance
+  - hybrid_code_action_fraction
+  - wam_fallback_fraction
+  final_table_requires:
+    all_tasks: 50
+    all_settings: 2
+    episodes_per_cell: 50
+    episodes_per_variant: 5000
+    unresolved_errors: 0
+    duplicate_scene_records: 0
+resource_plan:
+  hardware: 2x RTX PRO 5000 Blackwell 48GB; full workload fit/throughput unverified
+  training: both GPUs, one model at a time, planner and perception stopped
+  wam_evaluation: GPU0 low-level; GPU1 Tau0; one policy worker
+  hybrid_evaluation: additional perception GPU/service preferred; two-GPU co-residency requires measured fit and
+    fixed settings
+  wall_time: estimate from measured full-model steps and representative episode latency, not a fixed promise
+known_prerequisites:
+- Proposal environment and released 9B weights
+- Actual 50-task clean training demonstrations with stage/program alignment
+- Text embeddings and causal Tau0 subtask caches
+- C0 matched train/evaluation configs
+- Complete model training feasibility and online rollout checks
+- SAM3 weights/real service verification and Hybrid compute allocation
+- Accepted scene/instruction manifest, per-episode error accounting and strict result completeness checker
+published_results:
+- method: pi0.5
+  source: published_user_image
+  clean: 54.9
+  random: 27.7
+  average: 41.3
+- method: DreamZero
+  source: published_user_image
+  clean: 33.6
+  random: 17.6
+  average: 25.6
+- method: EgoScale
+  source: published_user_image
+  clean: 26.2
+  random: 2.9
+  average: 14.5
+- method: WLA
+  source: published_user_image
+  clean: 64.8
+  random: 3.6
+  average: 34.2
+- method: AW-0
+  source: published_user_image
+  clean: 80.8
+  random: 20.6
+  average: 50.7
+- method: AW-0 hybrid
+  source: published_user_image
+  clean: 63.1
+  random: 29.2
+  average: 46.2

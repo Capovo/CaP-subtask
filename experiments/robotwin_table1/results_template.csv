@@ -1,0 +1,13 @@
+id,method,source,execution,checkpoint,clean_percent,random_percent,average_percent,rollouts_per_task_setting,tasks,status,comparison_note
+P0,pi0.5,published_user_image,,,54.9,27.7,41.3,50,50,published_reference,Not a local reproduction result
+P1,DreamZero,published_user_image,,,33.6,17.6,25.6,50,50,published_reference,Not a local reproduction result
+P2,EgoScale,published_user_image,,,26.2,2.9,14.5,50,50,published_reference,Not a local reproduction result
+P3,WLA,published_user_image,,,64.8,3.6,34.2,50,50,published_reference,Not a local reproduction result
+P4,AW-0,published_user_image,,,80.8,20.6,50.7,50,50,published_reference,Not a local reproduction result
+P5,AW-0 hybrid,published_user_image,,,63.1,29.2,46.2,50,50,published_reference,Not a local reproduction result
+R0,AW-0 released WAM (local),local_planned,wam,/home/yilianli/project/models/agentic-wam-robotwin-release/wam.pt,,,,50,50,not_run,Released model with original evaluation parameters
+R1,AW-0 released Hybrid (local),local_planned,hybrid,/home/yilianli/project/models/agentic-wam-robotwin-release/hybrid.pt,,,,50,50,not_run,Released model with original evaluation parameters
+C0,Matched continued SFT (WAM),local_planned,wam,,,,,50,50,not_run,Matched local contrast for C0/C1; warm-start exposure disclosed separately
+C1,CaP-subtask (WAM),local_planned,wam,,,,,50,50,not_run,Matched local contrast for C0/C1; warm-start exposure disclosed separately
+C0H,Matched continued SFT (Hybrid),local_planned,hybrid,,,,,50,50,not_run,Matched local contrast for C0/C1; warm-start exposure disclosed separately
+C1H,CaP-subtask (Hybrid),local_planned,hybrid,,,,,50,50,not_run,Matched local contrast for C0/C1; warm-start exposure disclosed separately

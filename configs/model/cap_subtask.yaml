@@ -1,0 +1,12 @@
+defaults:
+  - agenticwam_cosmos
+  - _self_
+
+# Frozen Tau0 Proposal -> additional prompt-side tokens for the Code Expert.
+high_level_subtask_conditioning: true
+subtask_max_tokens: 128
+code_objective: joint
+code_memory: false
+use_code_expert: true
+# Expanded PROMPT budget; the generated code canvas stays 124 tokens.
+max_code_tokens: 768

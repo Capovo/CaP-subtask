@@ -1,0 +1,70 @@
+CaP-subtask 文件与修改清单
+日期：2026-11-24
+
+模型：冻结 τ0 Proposal 的 subtask -> Code Expert 的额外只读文本条件。
+总任务指令、视觉前缀、原始代码监督和视频/动作联合生成保留。
+训练/推理共用 prompt 格式；条件 token 不监督；缓存使用原始 episode/帧键。
+
+关键修改：
+- CodeExpert.build_code_batch 新增 high_level_subtasks，掩蔽条件标签，检查 token 预算。
+- AgenticWAMCosmos 训练损失与 joint 推理接入同一条件；保存/加载检查点条件元数据。
+- 工厂增加条件开关，限制当前支持的 joint 路线，拒绝未适配的 fast-joint 覆盖。
+- BaseLerobotDataset 保留数据集/episode/frame 身份，RobotVideoDataset 查找子任务缓存。
+- RoboTwin 策略在线调用 τ0，每回合重置记忆，保存子任务日志。
+- 训练 preflight 增加缓存绑定与覆盖检查；评测增加新配置、规划器健康检查及独立 policy_name。
+- τ0 提取模块增加模型/adapter 来源信息，避免混装 Transformers 4/5 环境。
+- 本机配置复用已安装环境、模型、模拟器与感知依赖；未修改原项目文件。
+
+继承基础文件 499 个，其中保持原样 484 个；功能修改 15 个；新增 28 个（另有清单和验证产物）。
+
+相对来源修改的文件：
+  configs/paths/local.yaml
+  configs/robotwin/site.yaml
+  pyproject.toml
+  robotwin/deploy/deploy_policy.py
+  robotwin/hybrid_eval/launch.py
+  scripts/activate_local.sh
+  scripts/eval_robotwin_release.py
+  scripts/preflight_sft.py
+  src/agenticwam/datasets/lerobot/base_lerobot_dataset.py
+  src/agenticwam/datasets/lerobot/robot_video_dataset.py
+  src/agenticwam/models/cosmos_mot/agenticwam_model.py
+  src/agenticwam/models/cosmos_mot/build.py
+  src/agenticwam/models/experts/code_expert.py
+  src/tau0_proposal/runtime.py
+  src/tau0_proposal/serve.py
+
+新增文件：
+  NOTICE.txt
+  README.txt
+  configs/model/cap_subtask.yaml
+  configs/robotwin/data/cap_subtask.yaml
+  configs/robotwin/eval/cap_subtask.yaml
+  configs/robotwin/task/cap_subtask_robotwin.yaml
+  configs/subtask/planner.yaml
+  examples/inference_request.template.json
+  examples/proposal.jsonl
+  examples/proposal/head.jpg
+  examples/proposal/left.jpg
+  examples/proposal/right.jpg
+  examples/tau0_proposal_output.json
+  requirements/proposal/TAU0_LICENSE
+  scripts/build_subtask_cache.py
+  scripts/eval_cap_subtask.sh
+  scripts/export_tau0_observations.py
+  scripts/infer_cap_subtask.py
+  scripts/predict_tau0_subtasks.py
+  scripts/prepare_subtask_data_config.py
+  scripts/serve_tau0_proposal.sh
+  scripts/train_cap_subtask.sh
+  scripts/validate_cap_subtask.sh
+  src/agenticwam/coding/subtask_cache.py
+  src/agenticwam/coding/subtask_conditioning.py
+  src/agenticwam/coding/subtask_data.py
+  src/agenticwam/coding/tau0_client.py
+  tests/test_subtask_integration.py
+
+审阅材料：SOURCE_MANIFEST.json、CHANGE_MANIFEST.json、changes.patch。
+验证材料：validation/unit_tests.log、train_dry_run.log、eval_dry_run.log、training_preflight.log、verification.json。
+
+11 项测试通过；训练/评测启动计划和配置检查通过。完整训练 preflight 因未提供数据、stage 标签、文本缓存与 τ0 缓存而按预期失败。未训练新权重，未运行真实9B规划器或完整闭环。

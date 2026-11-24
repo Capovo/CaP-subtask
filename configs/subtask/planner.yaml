@@ -1,0 +1,4 @@
+# Read by offline prediction and online policy; the HTTP service owns Qwen3.5.
+url: http://127.0.0.1:10089/predict
+timeout_s: 120
+task_type: full_qa

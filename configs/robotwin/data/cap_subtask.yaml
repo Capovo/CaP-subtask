@@ -1,0 +1,134 @@
+# Derived from robotwin_cap.yaml; adds episode-aligned Tau0 conditioning.
+train:
+  _target_: agenticwam.datasets.lerobot.deadline_dataset.DeadlineDataset
+  seconds: 60.0
+  max_retries: 2
+  dataset:
+    _target_: torch.utils.data.ConcatDataset
+    datasets:
+    - _target_: agenticwam.datasets.lerobot.robot_video_dataset.RobotVideoDataset
+      shape_meta:
+        images:
+        - key: cam_high
+          raw_shape:
+          - 3
+          - 480
+          - 640
+          shape:
+          - 3
+          - 224
+          - 320
+        - key: cam_left_wrist
+          raw_shape:
+          - 3
+          - 480
+          - 640
+          shape:
+          - 3
+          - 224
+          - 320
+        - key: cam_right_wrist
+          raw_shape:
+          - 3
+          - 480
+          - 640
+          shape:
+          - 3
+          - 224
+          - 320
+        action:
+        - key: default
+          raw_shape: 14
+          shape: 14
+        state:
+        - key: default
+          raw_shape: 14
+          shape: 14
+      num_frames: 33
+      global_sample_stride: 1
+      action_video_freq_ratio: 4
+      video_size:
+      - 224
+      - 320
+      camera_key: null
+      val_set_proportion: 0.0
+      is_training_set: true
+      pretrained_norm_stats: ${paths.robotwin_dataset_stats}
+      skip_padding_as_possible: false
+      concat_multi_camera: multiview
+      use_policy_code: true
+      policy_code_cache_dir: null
+      policy_code_coverage: 1.0
+      code_slices: true
+      code_slices_no_history: true
+      processor:
+        _target_: agenticwam.datasets.lerobot.processors.agenticwam_processor.AgenticWAMProcessor
+        shape_meta:
+          images:
+          - key: cam_high
+            raw_shape:
+            - 3
+            - 480
+            - 640
+            shape:
+            - 3
+            - 224
+            - 320
+          - key: cam_left_wrist
+            raw_shape:
+            - 3
+            - 480
+            - 640
+            shape:
+            - 3
+            - 224
+            - 320
+          - key: cam_right_wrist
+            raw_shape:
+            - 3
+            - 480
+            - 640
+            shape:
+            - 3
+            - 224
+            - 320
+          action:
+          - key: default
+            raw_shape: 14
+            shape: 14
+          state:
+          - key: default
+            raw_shape: 14
+            shape: 14
+        num_obs_steps: 33
+        num_output_cameras: 3
+        action_output_dim: 14
+        proprio_output_dim: 14
+        action_state_transforms: []
+        use_stepwise_action_norm: false
+        norm_default_mode: q01/q99
+        norm_exception_mode: null
+        action_state_merger:
+          _target_: agenticwam.datasets.lerobot.transforms.action_state_merger.ConcatLeftAlign
+        train_transforms:
+        - _target_: agenticwam.datasets.lerobot.transforms.image.ToTensor
+        - _target_: torchvision.transforms.Resize
+          size:
+          - 224
+          - 320
+        val_transforms:
+        - _target_: agenticwam.datasets.lerobot.transforms.image.ToTensor
+        - _target_: torchvision.transforms.Resize
+          size:
+          - 224
+          - 320
+      context_len: 128
+      dataset_dirs:
+      - ${paths.robotwin_cap}/click_alarmclock/lerobot/robotwin2.0
+      episode_indices: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/episodes_train.json
+      code_slices_cache_dir: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/slices_ep
+      cycle_cache_path: ${paths.robotwin_cap_slices}/click_alarmclock/raw/slices/cycle_by_idx.pt
+      cosmos_text_cache_dir: ${paths.robotwin_cap}/_text_cache/click_alarmclock
+      subtask_cache_path: ${paths.robotwin_subtasks}/click_alarmclock/subtask_cache.json
+      require_high_level_subtask: true
+val: null

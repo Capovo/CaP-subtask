@@ -1,0 +1,12 @@
+{
+  "unit_tests_passed": 11,
+  "config_compose": true,
+  "train_command_dry_run": true,
+  "eval_command_dry_run": true,
+  "code_canvas": 124,
+  "prompt_plus_code_budget": 768,
+  "real_proposal_weights_loaded": false,
+  "full_training_run": false,
+  "full_model_rollout": false,
+  "training_preflight": "expected failure: training datasets, stage labels and Tau0 caches not supplied"
+}

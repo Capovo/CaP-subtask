@@ -1,0 +1,12 @@
+This project derives its AgenticWAM implementation from:
+  /home/yilianli/project/agentic-wam
+  Git revision 275818e5787d59012eba4c43504342f1201ad25b
+The original BSD-2-Clause license is retained as LICENSE.
+
+src/tau0_proposal is extracted from:
+  /home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal
+The original license is retained at requirements/proposal/TAU0_LICENSE.
+Proposal requirements and the bundled proposal examples also come from that project.
+Source paths, revisions and initial hashes are recorded in SOURCE_MANIFEST.json.
+
+No model weights or training demonstrations are distributed in this directory.

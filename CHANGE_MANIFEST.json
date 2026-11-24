@@ -1,0 +1,221 @@
+{
+  "project": "/home/yilianli/project/CaP-subtask",
+  "base_agenticwam_commit": "275818e5787d59012eba4c43504342f1201ad25b",
+  "base_tau0_commit": "d804047f7b2d61c45077daada3183703aeed8cf5",
+  "copied_baseline_files": 499,
+  "inherited_unchanged_count": 484,
+  "original_source_hashes_unchanged": true,
+  "modified_from_baseline": [
+    {
+      "path": "configs/paths/local.yaml",
+      "source": "/home/yilianli/project/agentic-wam/configs/paths/local.yaml",
+      "before_sha256": "9c1eccfece22d60f9d31a7cc7d36f04b5bda217f17645a893544ada3b6f98536",
+      "after_sha256": "4450d3146f2644a059d860c2568ffac557e2c8ee505da9737560e248ffcc4a04"
+    },
+    {
+      "path": "configs/robotwin/site.yaml",
+      "source": "/home/yilianli/project/agentic-wam/configs/robotwin/site.yaml",
+      "before_sha256": "4075c3b85c44fa07b64e5231e2f9cd41f30108fff4fe793653e18cdaf34bcc8c",
+      "after_sha256": "2a0d11a2a073866d6c537a4130ab37afa49fb2316879820ccc6e57f281c1fc98"
+    },
+    {
+      "path": "pyproject.toml",
+      "source": "/home/yilianli/project/agentic-wam/pyproject.toml",
+      "before_sha256": "2e94ec59c7ec7469f103eb6604a5eadbaf3fd551290390ba2d1b8d4a8ff7f994",
+      "after_sha256": "34da8416e62985060d6dfbde159771b72ca56d92bff5e3bedd0ee2c66b0fc275"
+    },
+    {
+      "path": "robotwin/deploy/deploy_policy.py",
+      "source": "/home/yilianli/project/agentic-wam/robotwin/deploy/deploy_policy.py",
+      "before_sha256": "758f9631689c4876329d013a84ca765054affa286817c0c22db2e8721bccff2f",
+      "after_sha256": "30de22c341fccb185768ab4aad4089bf5668d45ebaf843bda289148007a6c4bd"
+    },
+    {
+      "path": "robotwin/hybrid_eval/launch.py",
+      "source": "/home/yilianli/project/agentic-wam/robotwin/hybrid_eval/launch.py",
+      "before_sha256": "cbaa6cd847d34dd4ddec0666f9abde2a338644377e42e44de0c411cdc09cf0ef",
+      "after_sha256": "5e2718f9dbd98d7f54a7ba633c0a7d67cf4fe48feec93b22011fbc78e15e8322"
+    },
+    {
+      "path": "scripts/activate_local.sh",
+      "source": "/home/yilianli/project/agentic-wam/scripts/activate_local.sh",
+      "before_sha256": "0abe21cf1b54c51a459ce49d1712b39beffe0dc45dfc5074e6ecaab4a7353afb",
+      "after_sha256": "edc2b42dfd238d0caeded923b05f19755b08ab8f7b58ef0f014c2c62cde7ab26"
+    },
+    {
+      "path": "scripts/eval_robotwin_release.py",
+      "source": "/home/yilianli/project/agentic-wam/scripts/eval_robotwin_release.py",
+      "before_sha256": "82348af74cfb1f0dbd5c67eb000108cb31964498d70ab4f4bbd2c6e63766d90f",
+      "after_sha256": "eca3846067dc7a30144aec9486a15414f82b51206610ed4f1106ada37c75329f"
+    },
+    {
+      "path": "scripts/preflight_sft.py",
+      "source": "/home/yilianli/project/agentic-wam/scripts/preflight_sft.py",
+      "before_sha256": "071ed5d4743809e7d7b005bef2357536912a5ab18cfab485196222351e735dcd",
+      "after_sha256": "ddfc1551652f2bf9ae46cd45e996565766f347fd8b86aea300e8d51d746a0607"
+    },
+    {
+      "path": "src/agenticwam/datasets/lerobot/base_lerobot_dataset.py",
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/base_lerobot_dataset.py",
+      "before_sha256": "80dc2a243af9ed1bc2ef43077846df6a1857d1e1b3a629901ad58803e987cd52",
+      "after_sha256": "40b7bd4715ddec147a266cb63fb70f59d915064eb52f57f0c78a2a8f1e6fa40f"
+    },
+    {
+      "path": "src/agenticwam/datasets/lerobot/robot_video_dataset.py",
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/datasets/lerobot/robot_video_dataset.py",
+      "before_sha256": "5ccc3c51ce376465cd096ed2db971d38f46dc5d10e528d0b5361cf6bd8045e8f",
+      "after_sha256": "edfa1bc57a65481d5201d74cd07110460f1d43408f43605e1c0e778d29db405d"
+    },
+    {
+      "path": "src/agenticwam/models/cosmos_mot/agenticwam_model.py",
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/agenticwam_model.py",
+      "before_sha256": "9476e3cbdb56a56e8ed036a7fc53b59515f592b990fb7b2983002b28a508863c",
+      "after_sha256": "ee6276fa6cd05b4b7252768a031032dd23e9b55067c55ca3bd505178c74288af"
+    },
+    {
+      "path": "src/agenticwam/models/cosmos_mot/build.py",
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/cosmos_mot/build.py",
+      "before_sha256": "3435a56968893665c27b89f8fbab6ba9ea1b99507f8465bce020e16680849555",
+      "after_sha256": "2a8b97307b47808c9287f6f256e6413d8f22bdc9fdef809baf8af8162a737ded"
+    },
+    {
+      "path": "src/agenticwam/models/experts/code_expert.py",
+      "source": "/home/yilianli/project/agentic-wam/src/agenticwam/models/experts/code_expert.py",
+      "before_sha256": "7ed8bd05b33baa2bbbe85b74ed6b3e254ad92e8ac8ca53c9d907226384cc45f0",
+      "after_sha256": "9edd1489b14600416665f7fc0ed81f076e8e3da32d8a29195f60f20a0013b18a"
+    },
+    {
+      "path": "src/tau0_proposal/runtime.py",
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/runtime.py",
+      "before_sha256": "760dc98f2610f1492d2061e3312bc0e5cd958dc8365b3e479a398421feced67a",
+      "after_sha256": "6f334dc9f28d78160051cb7071a1dd14907325d058fc918c32a67fb3336ca2e8"
+    },
+    {
+      "path": "src/tau0_proposal/serve.py",
+      "source": "/home/yilianli/project/tau-0-vla/src/tau0_vla/high_level/proposal/serve.py",
+      "before_sha256": "2af27f158c4b598098732dc076f84d1652eae91c144ba4af62628aecff887de2",
+      "after_sha256": "a13c8f9f8d291c79286652a4562fe30b5c388b177ddfb8781218f7683b4b93af"
+    }
+  ],
+  "new_files": [
+    {
+      "path": "NOTICE.txt",
+      "sha256": "1668d474f54648ec204cbf155f4b7091ffb1d6af40c844877042aad7cc17fa55"
+    },
+    {
+      "path": "README.txt",
+      "sha256": "af74a6861a97ddd71e9145c6ff66103f351813ea12fe2078d17173de1a1a649b"
+    },
+    {
+      "path": "configs/model/cap_subtask.yaml",
+      "sha256": "1942eee9e0234c60a50c0c2c0ef9c886c69793b19c417f45224ab0b789107f93"
+    },
+    {
+      "path": "configs/robotwin/data/cap_subtask.yaml",
+      "sha256": "c2c2506c8d50e9a7a4c42e5538fb340951fc1644f8ac4889eed8b8de0774b184"
+    },
+    {
+      "path": "configs/robotwin/eval/cap_subtask.yaml",
+      "sha256": "0decaf746f7387a596cb6b2047c43d06962d89d1e32073b84bd83892930f46c2"
+    },
+    {
+      "path": "configs/robotwin/task/cap_subtask_robotwin.yaml",
+      "sha256": "13e3be9a834986be78560afb5d1ad6129b683fa99425ccfef1324c9f97a88473"
+    },
+    {
+      "path": "configs/subtask/planner.yaml",
+      "sha256": "013663f43d088007479143d66f0dc2f00ab37f119c2d2d8d0c06cad7edc76c56"
+    },
+    {
+      "path": "examples/inference_request.template.json",
+      "sha256": "b04190e36b3db8e8382c9e2d0770bb060188dfca9d81384540c2881a0888d8be"
+    },
+    {
+      "path": "examples/proposal.jsonl",
+      "sha256": "03d672ac29ae459555594ac8844e1054e360a57c6447056825e842eae24b2b0e"
+    },
+    {
+      "path": "examples/proposal/head.jpg",
+      "sha256": "9ff4cd0e9ebce15d30fc1c2ecdbe5aeab8a90f6415a608e51e4ed497393a4928"
+    },
+    {
+      "path": "examples/proposal/left.jpg",
+      "sha256": "d68153161593fe7a5a97b6f0174690b3266f829a152742079fb33ec8ecd55049"
+    },
+    {
+      "path": "examples/proposal/right.jpg",
+      "sha256": "1e68e3516941b407585c8fb4253e82dc1e749825b620061f7ad6ab993b05f680"
+    },
+    {
+      "path": "examples/tau0_proposal_output.json",
+      "sha256": "dde77ddc5f46ed85ec06563006ed84f30ed3b08568ca5d43774f8f80df29e9fd"
+    },
+    {
+      "path": "requirements/proposal/TAU0_LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "scripts/build_subtask_cache.py",
+      "sha256": "e0eb1136bfa30c78e8ce99bbdca2ca178dd7b2c1242f4ad1281cdf2cae59af6b"
+    },
+    {
+      "path": "scripts/eval_cap_subtask.sh",
+      "sha256": "27d2693b2a2e15fc00de1160389cd4d10544f682d29072344f4ddfa21d5e8327"
+    },
+    {
+      "path": "scripts/export_tau0_observations.py",
+      "sha256": "05298372fa56d738f4d62f74275ce1ac31c0d1d8f09f74d7f47a65642878bb73"
+    },
+    {
+      "path": "scripts/infer_cap_subtask.py",
+      "sha256": "646fe9ae3d1c0080aca8821643276f343a903aa62c86aec1e680785fd72bc8b8"
+    },
+    {
+      "path": "scripts/predict_tau0_subtasks.py",
+      "sha256": "e3d6e10fa2e85ee309e97d5b1de8f67152213947c0cfb174fe497e79012add82"
+    },
+    {
+      "path": "scripts/prepare_subtask_data_config.py",
+      "sha256": "5d26268012060e6ef0d0e43d3a40b4a4e7e561f2ca2fbc2c40ce2f97661ed034"
+    },
+    {
+      "path": "scripts/serve_tau0_proposal.sh",
+      "sha256": "560c76291655eeb6bfd1fa4858f865d89811c1cb354d67dcdafb28b35d89aec2"
+    },
+    {
+      "path": "scripts/train_cap_subtask.sh",
+      "sha256": "02256eaf60e6171deb26c44888ba016838724ae8cc7a231d82f81289808aa83c"
+    },
+    {
+      "path": "scripts/validate_cap_subtask.sh",
+      "sha256": "3a546f036cb568440b5e1f75d19572639434407042236c43ce33517fe2d8fa12"
+    },
+    {
+      "path": "src/agenticwam/coding/subtask_cache.py",
+      "sha256": "9f7fecefe81a6c77f453505e6068ad7fa5e72425ccc02c4945062aed6ab1e612"
+    },
+    {
+      "path": "src/agenticwam/coding/subtask_conditioning.py",
+      "sha256": "ef6ec84df07dc4b86126d35d92db4cf630c2dac0073b57a4b5be8c9fd5ada63b"
+    },
+    {
+      "path": "src/agenticwam/coding/subtask_data.py",
+      "sha256": "e7efcae9df1714d7ea4e4034a342b43f17c78c5f9199642c0fb07c4801dc2752"
+    },
+    {
+      "path": "src/agenticwam/coding/tau0_client.py",
+      "sha256": "2b50fd0364db1e0c7d38436695d929ddfc1ca4ef1b0dfe004e9e7309c55c48d5"
+    },
+    {
+      "path": "tests/test_subtask_integration.py",
+      "sha256": "653cfb3cf91becf9fca879dbaba6b7f24cd29d0a1191fe93869987e486056c2b"
+    }
+  ],
+  "review_artifacts": [
+    "CHANGES.txt",
+    "CHANGE_MANIFEST.json",
+    "SOURCE_MANIFEST.json",
+    "changes.patch"
+  ],
+  "validation": "validation/verification.json"
+}

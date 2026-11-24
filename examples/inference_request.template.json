@@ -1,0 +1,26 @@
+{
+  "task": "click_alarmclock",
+  "instruction": "Press the button on the alarm clock.",
+  "images": {
+    "head": "/path/to/head.png",
+    "left": "/path/to/left_wrist.png",
+    "right": "/path/to/right_wrist.png"
+  },
+  "state": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "id": "your_observation_id"
+}
